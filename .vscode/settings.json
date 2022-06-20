@@ -1,0 +1,4 @@
+{
+  "appService.defaultWebAppToDeploy": "/subscriptions/04322cce-8d8a-4d6c-9666-2156f3cca782/microsoft.web/sites/subscriptions/04322cce-8d8a-4d6c-9666-2156f3cca782/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/scrapper-server",
+  "appService.deploySubpath": "."
+}
