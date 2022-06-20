@@ -3,4 +3,4 @@ dist
 public
 .env
 yarn.lock
-pachage.lock
+package.lock
