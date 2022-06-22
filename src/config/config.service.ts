@@ -63,8 +63,8 @@ class ConfigService {
         Group,
         Comment,
       ],
-      extra: {
-        ssl: true,
+      ssl: {
+        ca: process.env.SSL_CERT,
       },
       synchronize: true,
     };
