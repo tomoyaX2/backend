@@ -63,7 +63,9 @@ class ConfigService {
         Group,
         Comment,
       ],
-
+      extra: {
+        ssl: true,
+      },
       synchronize: true,
     };
   }
