@@ -12,6 +12,11 @@ export class AuthorController {
     type: String,
     required: false,
   })
+  @ApiQuery({
+    name: 'name',
+    type: String,
+    required: false,
+  })
   @Get()
   getAuthors(
     @Query('page') page: string,

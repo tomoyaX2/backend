@@ -12,6 +12,11 @@ export class LanguagesController {
     type: String,
     required: false,
   })
+  @ApiQuery({
+    name: 'name',
+    type: String,
+    required: false,
+  })
   @Get()
   getLanguages(
     @Query('page') page: string,

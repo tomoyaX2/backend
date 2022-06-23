@@ -12,6 +12,11 @@ export class GroupController {
     type: String,
     required: false,
   })
+  @ApiQuery({
+    name: 'name',
+    type: String,
+    required: false,
+  })
   @Get()
   getGroups(
     @Query('page') page: string,

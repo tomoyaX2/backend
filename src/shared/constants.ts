@@ -1,4 +1,3 @@
-export const hostUrl = process.env.CURERNT_HOST;
 export const albumRelations = [
   'albums',
   'albums.images',

@@ -12,6 +12,11 @@ export class SeriesController {
     type: String,
     required: false,
   })
+  @ApiQuery({
+    name: 'name',
+    type: String,
+    required: false,
+  })
   @Get()
   getSeries(
     @Query('page') page: string,

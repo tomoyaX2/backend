@@ -12,6 +12,11 @@ export class TypeController {
     type: String,
     required: false,
   })
+  @ApiQuery({
+    name: 'name',
+    type: String,
+    required: false,
+  })
   @Get()
   getTypes(
     @Query('page') page: string,

@@ -12,6 +12,11 @@ export class TagsController {
     type: String,
     required: false,
   })
+  @ApiQuery({
+    name: 'name',
+    type: String,
+    required: false,
+  })
   @Get()
   getTags(
     @Query('page') page: string,
