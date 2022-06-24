@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import { HitomiFields } from 'src/shared/enums/HitomiFields';
 import { AlbumDto, PaginatedAlbumDto, SearchDto } from './album.dto';
@@ -76,5 +84,10 @@ export class AlbumController {
     },
   ): Promise<void> {
     return this.albumService.updateAlbumImagesById(data);
+  }
+
+  @Delete(':albumId')
+  deleteAlbumById(@Param('albumId') albumId: string): void {
+    this.albumService.deleteAlbumById(albumId);
   }
 }

@@ -183,4 +183,8 @@ export class AlbumService {
     const finalAlbum = await this.albumRepository.save(album);
     await this.imageService.assignAlbumToImage(finalAlbum);
   }
+
+  deleteAlbumById = (id: string) => {
+    return this.albumRepository.delete(id);
+  };
 }
