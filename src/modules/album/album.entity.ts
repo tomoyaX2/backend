@@ -27,7 +27,10 @@ export class Album {
   name: string;
 
   @ManyToOne(() => Gallery, (gallery) => gallery.albums)
-  @JoinColumn({ name: 'gallery_id', referencedColumnName: 'id' })
+  @JoinColumn({
+    name: 'gallery_id',
+    referencedColumnName: 'id',
+  })
   gallery?: Gallery;
 
   @Column({ nullable: true })

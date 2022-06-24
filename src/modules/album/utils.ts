@@ -9,7 +9,7 @@ export const buildStrictPagination = async (
   albumRepository: Repository<AlbumDto>,
 ) => {
   const whereData = {};
-
+  console.log(new Date(), '0');
   const data = await albumRepository.find({
     relations: [
       'authors',
@@ -21,6 +21,7 @@ export const buildStrictPagination = async (
       'tags',
     ],
   });
+  console.log(new Date(), '1');
   const activeFilters = Object.keys(filterData).filter((key) => {
     const isActive = !!filterData[key]?.length;
     if (isActive)
@@ -29,7 +30,7 @@ export const buildStrictPagination = async (
         : [filterData[key]];
     return isActive;
   });
-
+  console.log(new Date(), '2');
   const result = data.filter((item) => {
     const isValid = true;
     //TODO: REWORK TO SQL
@@ -58,6 +59,7 @@ export const buildStrictPagination = async (
     }
     return isValid;
   });
+  console.log(new Date(), '3');
   return [
     chunkArray(
       result.map((el) => ({

@@ -90,6 +90,7 @@ export class AlbumService {
       albumParams,
       this.albumRepository,
     );
+    console.log(new Date(), '4');
     return { data: data ?? [], total, currentPage: albumParams.page };
   }
 

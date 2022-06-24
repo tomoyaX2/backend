@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import { HitomiFields } from 'src/shared/enums/HitomiFields';
+import { DeleteResult } from 'typeorm';
 import { AlbumDto, PaginatedAlbumDto, SearchDto } from './album.dto';
 import { AlbumService } from './album.service';
 
@@ -87,7 +88,7 @@ export class AlbumController {
   }
 
   @Delete(':albumId')
-  deleteAlbumById(@Param('albumId') albumId: string): void {
-    this.albumService.deleteAlbumById(albumId);
+  deleteAlbumById(@Param('albumId') albumId: string): Promise<DeleteResult> {
+    return this.albumService.deleteAlbumById(albumId);
   }
 }
