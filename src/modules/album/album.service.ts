@@ -91,7 +91,7 @@ export class AlbumService {
       this.albumRepository,
     );
     console.log(new Date(), '4');
-    return { data: data ?? [], total, currentPage: albumParams.page };
+    return { data: data ?? [], total, currentPage: albumParams.page } as any;
   }
 
   async createAlbum(album: AlbumDto): Promise<AlbumDto> {
@@ -110,7 +110,10 @@ export class AlbumService {
     albumIndex,
     albumPath,
   }: {
-    albumData: Record<HitomiFields | 'downloadPath', any>;
+    albumData: Record<
+      HitomiFields | 'downloadPath' | 'totalImages' | 'preview',
+      any
+    >;
     currentPageIndex: number;
     albumIndex: number;
     albumPath: string;
@@ -125,11 +128,13 @@ export class AlbumService {
       images,
       type,
       downloadPath,
+      totalImages,
+      preview,
     } = albumData;
     this.logService.saveLog(
       `current album: ${albumIndex}, current page index: ${currentPageIndex}`,
     );
-    const album = await this.createAlbum({ name: title[0] });
+    const album = await this.createAlbum({ name: title[0], totalImages });
 
     album.path = albumPath;
     if (authors.length) {
@@ -157,12 +162,12 @@ export class AlbumService {
     if (images.length) {
       const albumImages = await this.imageService.assignImageToAlbum(images);
       album.images = albumImages;
-      album.preview = albumImages[0].url;
     }
     const albumType = await this.typeService.assignType(type[0]);
 
     album.type = albumType;
     album.downloadPath = downloadPath;
+    album.preview = preview;
     const finalAlbum = await this.albumRepository.save(album);
     tags.length && (await this.tagsService.assignAlbumToTag(finalAlbum));
     images.length && (await this.imageService.assignAlbumToImage(finalAlbum));

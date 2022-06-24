@@ -7,6 +7,8 @@ import {
   ManyToMany,
   JoinTable,
   JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Author } from '../authors/authors.entity';
 import { Comment } from '../comments/comments.entity';
@@ -25,6 +27,9 @@ export class Album {
 
   @Column({ nullable: true })
   name: string;
+
+  @Column()
+  totalImages: number;
 
   @ManyToOne(() => Gallery, (gallery) => gallery.albums)
   @JoinColumn({
@@ -94,4 +99,10 @@ export class Album {
     },
   })
   tags?: Tag[];
+
+  @CreateDateColumn()
+  createdDate: Date;
+
+  @UpdateDateColumn()
+  updatedDate: Date;
 }

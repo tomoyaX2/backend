@@ -67,7 +67,10 @@ export class AlbumController {
   saveScrapperData(
     @Body()
     data: {
-      albumData: Record<HitomiFields | 'downloadPath', any>;
+      albumData: Record<
+        HitomiFields | 'downloadPath' | 'totalImages' | 'preview',
+        any
+      >;
       currentPageIndex: number;
       albumIndex: number;
       albumPath: string;

@@ -10,6 +10,7 @@ import { Series } from 'src/modules/series/series.entity';
 import { Tag } from 'src/modules/tags/tags.entity';
 import { Type } from 'src/modules/type/type.entity';
 import { User } from 'src/modules/users/users.entity';
+import * as fs from 'fs';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
@@ -65,7 +66,9 @@ class ConfigService {
       ],
       ssl: {
         ca: process.env.SSL_CERT,
+        // ca: process.env.SSL_CERT || fs.readFileSync('ca-certificate.crt'),
       },
+      // dropSchema: true,
       synchronize: true,
     };
   }
