@@ -27,6 +27,7 @@ export class LanguagesService {
       relations: withAlbums ? albumRelations : [],
       take: perPage,
       skip: (page - 1) * perPage,
+      order: { name: 'ASC' },
     });
     return { data, total, currentPage: page };
   }
