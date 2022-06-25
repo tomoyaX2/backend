@@ -65,8 +65,7 @@ class ConfigService {
         Comment,
       ],
       ssl: {
-        ca: process.env.SSL_CERT,
-        // ca: process.env.SSL_CERT || fs.readFileSync('ca-certificate.crt'),
+        ca: process.env.SSL_CERT || fs.readFileSync('ca-certificate.crt'),
       },
       // dropSchema: true,
       synchronize: true,

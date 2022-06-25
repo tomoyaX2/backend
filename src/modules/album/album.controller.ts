@@ -48,7 +48,7 @@ export class AlbumController {
     return this.albumService.searchAlbums({
       page: parseInt(data.page),
       perPage: parseInt(data.perPage),
-      name: data.name,
+      title: data.title,
       authors: data.authors,
       series: data.series,
       language: data.languages,

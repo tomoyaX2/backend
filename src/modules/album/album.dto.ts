@@ -16,7 +16,7 @@ export class PaginatedAlbumDto {
 
 export class AlbumDto {
   id?: string;
-  name?: string;
+  title?: string;
   gallery?: GalleryDto;
   images?: ImageDto[];
   authors?: AuthorDto[];
@@ -35,7 +35,7 @@ export class AlbumDto {
 export class SearchDto {
   page: string;
   perPage: string;
-  name: string;
+  title: string;
   tags: string[];
   authors: string[];
   series: string[];

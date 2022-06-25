@@ -90,7 +90,6 @@ export class AlbumService {
       albumParams,
       this.albumRepository,
     );
-    console.log(new Date(), '4');
     return { data: data ?? [], total, currentPage: albumParams.page } as any;
   }
 
@@ -134,7 +133,7 @@ export class AlbumService {
     this.logService.saveLog(
       `current album: ${albumIndex}, current page index: ${currentPageIndex}`,
     );
-    const album = await this.createAlbum({ name: title[0], totalImages });
+    const album = await this.createAlbum({ title: title[0], totalImages });
 
     album.path = albumPath;
     if (authors.length) {

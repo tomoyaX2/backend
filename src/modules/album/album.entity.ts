@@ -26,7 +26,7 @@ export class Album {
   id: string;
 
   @Column({ nullable: true })
-  name: string;
+  title: string;
 
   @Column()
   totalImages: number;

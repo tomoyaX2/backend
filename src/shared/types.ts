@@ -25,4 +25,5 @@ export interface AlbumPaginationQuery extends DefaultPaginationQuery {
   [AlbumFilters.Group]?: string[];
   [AlbumFilters.Tag]?: string[];
   [AlbumFilters.Type]?: string[];
+  [AlbumFilters.Title]?: string;
 }

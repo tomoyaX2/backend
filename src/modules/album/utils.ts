@@ -1,7 +1,6 @@
 import { AlbumPaginationQuery } from 'src/shared/types';
-import { FindManyOptions, Repository } from 'typeorm';
+import { FindManyOptions, Like, Repository } from 'typeorm';
 import { AlbumDto } from './album.dto';
-import * as _ from 'lodash';
 
 export const buildStrictPagination = async (
   filterData: AlbumPaginationQuery,
@@ -12,19 +11,28 @@ export const buildStrictPagination = async (
     order: { createdDate: 'ASC' },
     skip: (filterData.page - 1) * filterData.perPage,
     take: filterData.perPage,
-  } as FindManyOptions<AlbumDto>;
+  } as FindManyOptions<AlbumDto> & { title?: any };
   const activeFilters = {};
   const whereData = [];
-  console.log(new Date(), '0');
+
   for (const filterKey of Object.keys(filterData)) {
-    if (filterKey !== 'page' && filterKey !== 'perPage') {
+    const data = filterData[filterKey];
+    if (
+      filterKey !== 'page' &&
+      filterKey !== 'perPage' &&
+      filterKey !== 'title'
+    ) {
       const data = filterData[filterKey];
       if (data?.length) {
         activeFilters[filterKey] = data;
         whereData.push(`${filterKey}.id IN(:...${filterKey})`);
       }
     }
+    if (filterKey === 'title' && data?.length) {
+      searchObject.where = { title: Like(`%${data}%`) };
+    }
   }
+  const whereString = whereData.join(' AND ');
   if (whereData.length) {
     searchObject.join = {
       alias: 'album',
@@ -41,7 +49,6 @@ export const buildStrictPagination = async (
       qb.where(whereString, activeFilters);
     };
   }
-  const whereString = whereData.join(' AND ');
   const data = await albumRepository.findAndCount(searchObject);
 
   return data;

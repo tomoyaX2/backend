@@ -6,4 +6,5 @@ export enum AlbumFilters {
   Group = 'group',
   Tag = 'tags',
   Type = 'type',
+  Title = 'title',
 }
