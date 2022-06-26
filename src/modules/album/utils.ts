@@ -8,7 +8,7 @@ export const buildStrictPagination = async (
 ) => {
   const searchObject = {
     relations: ['authors', 'series', 'type', 'language', 'group', 'tags'],
-    order: { createdDate: 'ASC' },
+    order: { createdDate: 'DESC' },
     skip: (filterData.page - 1) * filterData.perPage,
     take: filterData.perPage,
   } as FindManyOptions<AlbumDto> & { title?: any };
@@ -22,7 +22,6 @@ export const buildStrictPagination = async (
       filterKey !== 'perPage' &&
       filterKey !== 'title'
     ) {
-      const data = filterData[filterKey];
       if (data?.length) {
         activeFilters[filterKey] = data;
         whereData.push(`${filterKey}.id IN(:...${filterKey})`);
@@ -36,7 +35,7 @@ export const buildStrictPagination = async (
   if (whereData.length) {
     searchObject.join = {
       alias: 'album',
-      innerJoin: {
+      leftJoin: {
         tags: 'album.tags',
         group: 'album.group',
         authors: 'album.authors',
