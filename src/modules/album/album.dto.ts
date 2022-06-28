@@ -26,6 +26,7 @@ export class AlbumDto {
   tags?: TagsDto[];
   path?: string;
   type?: TypeDto;
+  views?: number;
   comments?: CommentDto[];
   preview?: string;
   downloadPath?: string;

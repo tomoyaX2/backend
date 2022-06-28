@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Query,
+  Req,
 } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import { HitomiFields } from 'src/shared/enums/HitomiFields';

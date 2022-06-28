@@ -56,7 +56,7 @@ export class AlbumService {
     return { data: result, total, currentPage: page };
   }
 
-  async getAlbumById(id: string): Promise<AlbumDto> {
+  async getAlbumById(id: string, ignoreViews = false): Promise<AlbumDto> {
     const album = await this.albumRepository.findOne({
       relations: [
         'authors',
@@ -70,6 +70,10 @@ export class AlbumService {
       ],
       where: { id },
     });
+    if (!ignoreViews) {
+      album.views = album.views + 1;
+    }
+    this.albumRepository.save(album);
     return { ...album, images: _.orderBy(album.images, ['url']) };
   }
 
@@ -167,6 +171,7 @@ export class AlbumService {
     album.type = albumType;
     album.downloadPath = downloadPath;
     album.preview = preview;
+    album.views = 0;
     const finalAlbum = await this.albumRepository.save(album);
     tags.length && (await this.tagsService.assignAlbumToTag(finalAlbum));
     images.length && (await this.imageService.assignAlbumToImage(finalAlbum));
@@ -182,7 +187,7 @@ export class AlbumService {
     images: string[];
     albumId: string;
   }): Promise<void> {
-    const album = await this.getAlbumById(albumId);
+    const album = await this.getAlbumById(albumId, true);
     const albumImages = await this.imageService.assignImageToAlbum(images);
     album.images = [...(album?.images || []), ...albumImages];
     const finalAlbum = await this.albumRepository.save(album);

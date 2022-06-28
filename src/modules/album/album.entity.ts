@@ -28,6 +28,9 @@ export class Album {
   @Column({ nullable: true })
   title: string;
 
+  @Column({ nullable: true })
+  views?: number;
+
   @Column()
   totalImages: number;
 
