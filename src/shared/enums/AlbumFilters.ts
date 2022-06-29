@@ -7,4 +7,5 @@ export enum AlbumFilters {
   Tag = 'tags',
   Type = 'type',
   Title = 'title',
+  SortBy = 'sortBy',
 }

@@ -1,3 +1,4 @@
+import { Sort } from 'src/modules/album/album.dto';
 import { AlbumFilters } from './enums/AlbumFilters';
 
 export enum SelectorTypes {
@@ -26,4 +27,5 @@ export interface AlbumPaginationQuery extends DefaultPaginationQuery {
   [AlbumFilters.Tag]?: string[];
   [AlbumFilters.Type]?: string[];
   [AlbumFilters.Title]?: string;
+  [AlbumFilters.SortBy]: Sort;
 }

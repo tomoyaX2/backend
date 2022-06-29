@@ -32,14 +32,18 @@ export class ImageService {
     return await this.imagesRepository.save(image);
   }
 
-  async assignImageToAlbum(images: string[]) {
+  async assignImageToAlbum(
+    images: { url: string; width: number; height: number }[],
+  ) {
     const albumImages: Image[] = [];
     for (const image of images) {
       const adImage = await this.saveImage({});
       if (image) {
         const albumImage = await this.saveImage({
           ...adImage,
-          url: image,
+          url: image.url,
+          width: image.width,
+          height: image.height,
           name: adImage.id,
         });
         albumImages.push(albumImage);

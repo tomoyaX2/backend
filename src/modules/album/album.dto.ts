@@ -8,6 +8,11 @@ import { SeriesDto } from '../series/series.dto';
 import { TagsDto } from '../tags/tags.dto';
 import { TypeDto } from '../type/type.dto';
 
+export interface Sort {
+  views?: 'DESC';
+  rate?: 'DESC';
+}
+
 export class PaginatedAlbumDto {
   data: AlbumDto[];
   total: number;
@@ -27,6 +32,7 @@ export class AlbumDto {
   path?: string;
   type?: TypeDto;
   views?: number;
+  rate?: number;
   comments?: CommentDto[];
   preview?: string;
   downloadPath?: string;
@@ -43,4 +49,5 @@ export class SearchDto {
   languages: string[];
   groups: string[];
   types: string[];
+  sortBy: Sort;
 }

@@ -17,6 +17,12 @@ export class Image {
   @Column({ nullable: true })
   url?: string;
 
+  @Column({ nullable: true })
+  width?: number;
+
+  @Column({ nullable: true })
+  height?: number;
+
   @ManyToOne(() => Album, (album) => album.images, {
     onDelete: 'CASCADE',
   })

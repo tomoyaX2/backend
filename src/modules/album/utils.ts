@@ -8,7 +8,7 @@ export const buildStrictPagination = async (
 ) => {
   const searchObject = {
     relations: ['authors', 'series', 'type', 'language', 'group', 'tags'],
-    order: { createdDate: 'DESC' },
+    order: filterData.sortBy ? filterData.sortBy : { createdDate: 'DESC' },
     skip: (filterData.page - 1) * filterData.perPage,
     take: filterData.perPage,
   } as FindManyOptions<AlbumDto> & { title?: any };

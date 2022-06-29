@@ -6,7 +6,6 @@ import {
   Param,
   Post,
   Query,
-  Req,
 } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 import { HitomiFields } from 'src/shared/enums/HitomiFields';
@@ -56,6 +55,7 @@ export class AlbumController {
       group: data.groups,
       tags: data.tags,
       type: data.types,
+      sortBy: data.sortBy,
     });
   }
 
@@ -85,7 +85,7 @@ export class AlbumController {
     @Body()
     data: {
       albumId: string;
-      images: string[];
+      images: { url: string; width: number; height: number }[];
     },
   ): Promise<void> {
     return this.albumService.updateAlbumImagesById(data);

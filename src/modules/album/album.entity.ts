@@ -31,6 +31,9 @@ export class Album {
   @Column({ nullable: true })
   views?: number;
 
+  @Column({ nullable: true })
+  rate?: number;
+
   @Column()
   totalImages: number;
 

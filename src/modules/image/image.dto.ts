@@ -11,4 +11,6 @@ export interface ImageDto {
   name?: string;
   url?: string;
   album?: Album;
+  width?: number;
+  height?: number;
 }

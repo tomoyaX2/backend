@@ -162,6 +162,7 @@ export class AlbumService {
       );
       album.language = albumLanguage;
     }
+    console.log(images, 'images');
     if (images.length) {
       const albumImages = await this.imageService.assignImageToAlbum(images);
       album.images = albumImages;
@@ -184,7 +185,7 @@ export class AlbumService {
     images,
     albumId,
   }: {
-    images: string[];
+    images: { url: string; width: number; height: number }[];
     albumId: string;
   }): Promise<void> {
     const album = await this.getAlbumById(albumId, true);
