@@ -5,7 +5,6 @@ import { ImageDto, PaginatedImageDto } from './image.dto';
 import { Image } from './image.entity';
 import { LogService } from '../log/log.service';
 import { DefaultPaginationQuery } from 'src/shared/types';
-import { albumRelations } from 'src/shared/constants';
 import { AlbumDto } from '../album/album.dto';
 
 @Injectable()
@@ -19,11 +18,12 @@ export class ImageService {
   async getImages({
     page,
     perPage,
-  }: DefaultPaginationQuery): Promise<PaginatedImageDto> {
+    albumId,
+  }: DefaultPaginationQuery & { albumId: string }): Promise<PaginatedImageDto> {
     const [data, total] = await this.imagesRepository.findAndCount({
-      relations: albumRelations,
       take: perPage,
       skip: (page - 1) * perPage,
+      where: { album: albumId },
     });
     return { data, total, currentPage: page };
   }
