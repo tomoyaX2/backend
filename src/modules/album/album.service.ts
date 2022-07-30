@@ -60,7 +60,6 @@ export class AlbumService {
     const album = await this.albumRepository.findOne({
       relations: [
         'authors',
-        'images',
         'series',
         'language',
         'group',

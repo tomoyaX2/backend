@@ -24,6 +24,7 @@ export class ImageService {
       take: perPage,
       skip: (page - 1) * perPage,
       where: { album: albumId },
+      order: { name: 'ASC' },
     });
     return { data, total, currentPage: page };
   }
