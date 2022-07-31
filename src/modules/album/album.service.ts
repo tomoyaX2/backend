@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HitomiFields } from 'src/shared/enums/HitomiFields';
 import { Repository } from 'typeorm';
@@ -69,6 +69,10 @@ export class AlbumService {
       ],
       where: { id },
     });
+    if (!album) {
+      throw new NotFoundException({ message: 'Album not found' });
+    }
+
     if (!ignoreViews) {
       album.views = album.views + 1;
     }
@@ -113,7 +117,11 @@ export class AlbumService {
     albumPath,
   }: {
     albumData: Record<
-      HitomiFields | 'downloadPath' | 'totalImages' | 'preview',
+      | HitomiFields
+      | 'downloadPath'
+      | 'totalImages'
+      | 'preview'
+      | 'previewOrientation',
       any
     >;
     currentPageIndex: number;
@@ -132,6 +140,7 @@ export class AlbumService {
       downloadPath,
       totalImages,
       preview,
+      previewOrientation,
     } = albumData;
     this.logService.saveLog(
       `current album: ${albumIndex}, current page index: ${currentPageIndex}`,
@@ -161,7 +170,6 @@ export class AlbumService {
       );
       album.language = albumLanguage;
     }
-    console.log(images, 'images');
     if (images.length) {
       const albumImages = await this.imageService.assignImageToAlbum(images);
       album.images = albumImages;
@@ -169,6 +177,7 @@ export class AlbumService {
     const albumType = await this.typeService.assignType(type[0]);
 
     album.type = albumType;
+    album.previewOrientation = previewOrientation;
     album.downloadPath = downloadPath;
     album.preview = preview;
     album.views = 0;
@@ -187,7 +196,10 @@ export class AlbumService {
     images: { url: string; width: number; height: number }[];
     albumId: string;
   }): Promise<void> {
-    const album = await this.getAlbumById(albumId, true);
+    const album = await this.albumRepository.findOne({
+      relations: ['images'],
+      where: { id: albumId },
+    });
     const albumImages = await this.imageService.assignImageToAlbum(images);
     album.images = [...(album?.images || []), ...albumImages];
     const finalAlbum = await this.albumRepository.save(album);

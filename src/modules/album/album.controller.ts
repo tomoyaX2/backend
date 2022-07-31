@@ -69,7 +69,11 @@ export class AlbumController {
     @Body()
     data: {
       albumData: Record<
-        HitomiFields | 'downloadPath' | 'totalImages' | 'preview',
+        | HitomiFields
+        | 'downloadPath'
+        | 'totalImages'
+        | 'preview'
+        | 'previewOrientation',
         any
       >;
       currentPageIndex: number;

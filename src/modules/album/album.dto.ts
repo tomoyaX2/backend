@@ -29,6 +29,7 @@ export class AlbumDto {
   language?: LanguageDto;
   group?: GroupDto;
   tags?: TagsDto[];
+  previewOrientation?: 'horizontal' | 'vertical';
   path?: string;
   type?: TypeDto;
   views?: number;

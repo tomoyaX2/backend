@@ -56,6 +56,9 @@ export class Album {
   @Column({ nullable: true })
   preview: string;
 
+  @Column({ nullable: true })
+  previewOrientation: 'horizontal' | 'vertical';
+
   @OneToMany(() => Comment, (comment) => comment.album, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
