@@ -18,6 +18,7 @@ import { CommentsModule } from './modules/comments/comments.module';
 import { MailModule } from './modules/mail/mail.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
+import { BlockedAlbumModule } from './modules/blocked/blocked.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
     AuthModule,
     CommentsModule,
     MailModule,
+    BlockedAlbumModule,
   ],
   controllers: [AppController],
   providers: [AppService],

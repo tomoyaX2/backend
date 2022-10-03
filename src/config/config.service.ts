@@ -11,6 +11,7 @@ import { Tag } from 'src/modules/tags/tags.entity';
 import { Type } from 'src/modules/type/type.entity';
 import { User } from 'src/modules/users/users.entity';
 import * as fs from 'fs';
+import { BlockedAlbum } from 'src/modules/blocked/blocked.entity';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
@@ -63,6 +64,7 @@ class ConfigService {
         Type,
         Group,
         Comment,
+        BlockedAlbum,
       ],
       ssl: {
         ca: process.env.SSL_CERT || fs.readFileSync('ca-certificate.crt'),

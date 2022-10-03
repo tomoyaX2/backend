@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthorsModule } from '../authors/authors.module';
+import { BlockedAlbumModule } from '../blocked/blocked.module';
 import { GroupModule } from '../group/group.module';
 import { ImageModule } from '../image/image.module';
 import { LanguagesModule } from '../languages/languages.module';
@@ -23,6 +24,7 @@ import { AlbumService } from './album.service';
     AuthorsModule,
     TypeModule,
     LogModule,
+    BlockedAlbumModule,
   ],
   controllers: [AlbumController],
   providers: [AlbumService],

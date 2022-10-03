@@ -15,6 +15,7 @@ import { LogService } from '../log/log.service';
 import { AlbumPaginationQuery, DefaultPaginationQuery } from 'src/shared/types';
 import { buildStrictPagination } from './utils';
 import * as _ from 'lodash';
+import { BlockedAlbumService } from '../blocked/blocked.service';
 
 @Injectable()
 export class AlbumService {
@@ -29,6 +30,7 @@ export class AlbumService {
     private imageService: ImageService,
     private typeService: TypeService,
     private logService: LogService,
+    private blockedAlbumService: BlockedAlbumService,
   ) {}
 
   async getAlbums({
@@ -36,24 +38,10 @@ export class AlbumService {
     perPage,
   }: DefaultPaginationQuery): Promise<PaginatedAlbumDto> {
     const [data, total] = await this.albumRepository.findAndCount({
-      relations: [
-        'authors',
-        'series',
-        'type',
-        'images',
-        'language',
-        'group',
-        'tags',
-      ],
       take: perPage,
       skip: (page - 1) * perPage,
     });
-    const result = data.map((el) => ({
-      ...el,
-      totalImages: el.images.length,
-      images: _.orderBy(el.images, ['url']).slice(0, perPage),
-    }));
-    return { data: result, total, currentPage: page };
+    return { data, total, currentPage: page };
   }
 
   async getAlbumById(id: string, ignoreViews = false): Promise<AlbumDto> {
@@ -206,7 +194,9 @@ export class AlbumService {
     await this.imageService.assignAlbumToImage(finalAlbum);
   }
 
-  deleteAlbumById = (id: string) => {
+  deleteAlbumById = async (id: string) => {
+    const album = await this.albumRepository.findOne({ id });
+    await this.blockedAlbumService.blockAlbum({ name: album.title });
     return this.albumRepository.delete(id);
   };
 }
