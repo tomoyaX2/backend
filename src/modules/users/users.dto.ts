@@ -10,7 +10,7 @@ export class UserDto {
   id?: string;
   login: string;
   password: string;
-  email: string;
+  email?: string;
   name: string;
   avatarUrl?: string;
   phone?: string;

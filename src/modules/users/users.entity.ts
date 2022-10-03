@@ -10,8 +10,8 @@ export class User {
   @Column({ unique: true, length: 255 })
   login: string;
 
-  @Column({ unique: true, length: 255 })
-  email: string;
+  @Column({ unique: true, length: 255, nullable: true })
+  email?: string;
 
   @Column({ length: 255 })
   name: string;

@@ -7,7 +7,7 @@ export class RegistrationDto {
   login: string;
   password: string;
   matchPassword: string;
-  email: string;
+  email?: string;
   name: string;
   avatarUrl?: string;
   phone?: string;

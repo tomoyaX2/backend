@@ -28,7 +28,7 @@ export const buildStrictPagination = async (
       }
     }
     if (filterKey === 'title' && data?.length) {
-      searchObject.where = { title: Like(`%${data}%`) };
+      whereData.push(`UPPER(title) LIKE UPPER('${data}%')`);
     }
   }
   const whereString = whereData.join(' AND ');
