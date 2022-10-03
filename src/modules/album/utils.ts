@@ -1,5 +1,5 @@
 import { AlbumPaginationQuery } from 'src/shared/types';
-import { FindManyOptions, Like, Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { AlbumDto } from './album.dto';
 
 export const buildStrictPagination = async (

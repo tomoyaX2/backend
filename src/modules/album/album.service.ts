@@ -100,8 +100,6 @@ export class AlbumService {
 
   async generateAlbum({
     albumData,
-    currentPageIndex,
-    albumIndex,
     albumPath,
   }: {
     albumData: Record<
@@ -112,8 +110,6 @@ export class AlbumService {
       | 'previewOrientation',
       any
     >;
-    currentPageIndex: number;
-    albumIndex: number;
     albumPath: string;
   }): Promise<string> {
     const {
@@ -130,9 +126,6 @@ export class AlbumService {
       preview,
       previewOrientation,
     } = albumData;
-    this.logService.saveLog(
-      `current album: ${albumIndex}, current page index: ${currentPageIndex}`,
-    );
     const album = await this.createAlbum({ title: title[0], totalImages });
 
     album.path = albumPath;
