@@ -26,7 +26,6 @@ export const isValidRegistrationInput = ({
     .match(
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
     );
-
   if (!passwordMatchRequirements) {
     errors.invalidPassword = Errors.registrationErrors.invalidPassword;
   }
@@ -38,6 +37,8 @@ export const isValidRegistrationInput = ({
   }
   if (!emailMatchRegExp) {
     errors.invalidEmail = Errors.registrationErrors.invalidEmail;
+  }
+  if (Object.keys(errors).length) {
     throw new BadRequestException({
       message: errors,
       statusCode: HttpStatus.BAD_REQUEST,
