@@ -1,5 +1,7 @@
 import {
+  BadRequestException,
   ForbiddenException,
+  HttpStatus,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -28,7 +30,12 @@ export class AuthService {
   async login({ login, password }: LoginDto): Promise<TokenReturnDto> {
     const user = await this.usersService.getUserByLogin(login);
     if (!user) {
-      throw new UnauthorizedException(Errors.loginErrors.incorrentInput);
+      throw new UnauthorizedException({
+        message: {
+          incorrentInput: Errors.loginErrors.incorrentInput,
+        },
+        statusCode: HttpStatus.UNAUTHORIZED,
+      });
     }
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (isValidPassword) {
@@ -37,7 +44,12 @@ export class AuthService {
         accessToken,
       };
     }
-    throw new UnauthorizedException(Errors.loginErrors.incorrentInput);
+    throw new UnauthorizedException({
+      message: {
+        incorrentInput: Errors.loginErrors.incorrentInput,
+      },
+      statusCode: HttpStatus.UNAUTHORIZED,
+    });
   }
 
   async saveUserToken(user: UserDto) {
@@ -50,6 +62,20 @@ export class AuthService {
   }
 
   async registration(data: RegistrationDto): Promise<{ accessToken: string }> {
+    const isExistsEmail = await this.usersService.getUserByEmail(data.email);
+    const isExistsLogin = await this.usersService.getUserByLogin(data.login);
+    if (isExistsEmail) {
+      throw new BadRequestException({
+        message: { emailExists: Errors.registrationErrors.emailExists },
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+    }
+    if (isExistsLogin) {
+      throw new BadRequestException({
+        message: { loginExists: Errors.registrationErrors.loginExists },
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+    }
     const saltOrRounds = 10;
     const hash = await bcrypt.hash(data.password, saltOrRounds);
     const user = await this.usersService.saveUser({ ...data, password: hash });

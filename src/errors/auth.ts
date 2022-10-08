@@ -28,6 +28,12 @@ export const Errors = {
     invalidEmail: {
       message: 'Invalid email',
     },
+    emailExists: {
+      message: 'This email is already taken',
+    },
+    loginExists: {
+      message: 'This login is already taken',
+    },
   },
   authErrors: {
     invalidToken: {

@@ -9,7 +9,7 @@ export class PaginatedUsersDto {
 export class UserDto {
   id?: string;
   login: string;
-  password: string;
+  password?: string;
   email?: string;
   name: string;
   avatarUrl?: string;

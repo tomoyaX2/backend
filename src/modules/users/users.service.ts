@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { omit } from 'src/shared/utils';
 import { FindOperator, Like, Repository } from 'typeorm';
 import { PaginatedUsersDto, UserDto } from './users.dto';
 import { User } from './users.entity';
-
 @Injectable()
 export class UsersService {
   constructor(
@@ -30,7 +30,7 @@ export class UsersService {
       },
       { relations: ['comments'] },
     );
-    return data;
+    return omit<UserDto>(data, ['password']);
   }
 
   async getUserByLogin(login: string): Promise<UserDto> {

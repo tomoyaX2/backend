@@ -1,7 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Comment } from '../comments/comments.entity';
 import { Gallery } from '../gallery/gallery.entity';
-import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -16,7 +15,6 @@ export class User {
   @Column({ length: 255 })
   name: string;
 
-  @Exclude({ toPlainOnly: true })
   @Column({ length: 255 })
   password: string;
 
@@ -29,20 +27,16 @@ export class User {
   @Column({ nullable: true })
   avatarUrl: string;
 
-  @Exclude({ toPlainOnly: true })
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   recovery_code: string;
 
-  @Exclude({ toPlainOnly: true })
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   next_recovery_request_in?: string;
 
-  @Exclude({ toPlainOnly: true })
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   access_token: string;
 
-  @Exclude({ toPlainOnly: true })
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   two_factor_code: string;
 
   @Column({ nullable: true, length: 255 })
