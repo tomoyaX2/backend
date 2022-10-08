@@ -27,6 +27,9 @@ export class User {
   @Column({ nullable: true })
   avatarUrl: string;
 
+  @Column({ nullable: true })
+  isAdmin: boolean;
+
   @Column({ nullable: true, select: false })
   recovery_code: string;
 

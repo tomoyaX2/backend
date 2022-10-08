@@ -6,10 +6,12 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { HitomiFields } from 'src/shared/enums/HitomiFields';
 import { DeleteResult } from 'typeorm';
+import { AccessTokenGuard } from '../auth/auth.guard';
 import { AlbumDto, PaginatedAlbumDto, SearchDto } from './album.dto';
 import { AlbumService } from './album.service';
 
@@ -96,6 +98,8 @@ export class AlbumController {
   }
 
   @Delete(':albumId')
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
   deleteAlbumById(@Param('albumId') albumId: string): Promise<DeleteResult> {
     return this.albumService.deleteAlbumById(albumId);
   }

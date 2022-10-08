@@ -19,4 +19,10 @@ export class UserDto {
   recovery_code?: string;
   next_recovery_request_in?: string;
   comments?: CommentDto[];
+  isAdmin?: boolean;
+}
+
+export class ChangeAdminStatusDto {
+  id: string;
+  status: boolean;
 }

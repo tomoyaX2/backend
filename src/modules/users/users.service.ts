@@ -24,12 +24,9 @@ export class UsersService {
   }
 
   async getUserById(id: string): Promise<UserDto> {
-    const data = await this.usersRepository.findOne(
-      {
-        id,
-      },
-      { relations: ['comments'] },
-    );
+    const data = await this.usersRepository.findOne({
+      id,
+    });
     return omit<UserDto>(data, ['password']);
   }
 
@@ -40,10 +37,24 @@ export class UsersService {
 
   async getUserByEmail(email: string): Promise<UserDto> {
     const data = await this.usersRepository.findOne({ email });
-    return data;
+    return omit<UserDto>(data, ['password', 'isAdmin']);
   }
 
   async saveUser(user: UserDto): Promise<UserDto> {
     return this.usersRepository.save(user);
+  }
+
+  async changeAdminStatus({
+    id,
+    status,
+  }: {
+    id: string;
+    status: boolean;
+  }): Promise<void> {
+    const user = await this.usersRepository.findOne({
+      id,
+    });
+    user.isAdmin = status;
+    await this.usersRepository.save(user);
   }
 }
