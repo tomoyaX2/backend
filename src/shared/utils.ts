@@ -22,5 +22,5 @@ export const omit = <DataType>(
   for (const key of activeKeys) {
     result[key] = object[key];
   }
-  return result;
+  return !!Object.keys(result).length ? result : null;
 };

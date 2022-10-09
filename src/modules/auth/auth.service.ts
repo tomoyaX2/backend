@@ -64,6 +64,7 @@ export class AuthService {
   async registration(data: RegistrationDto): Promise<{ accessToken: string }> {
     const isExistsEmail = await this.usersService.getUserByEmail(data.email);
     const isExistsLogin = await this.usersService.getUserByLogin(data.login);
+    console.log(isExistsEmail, 'exists');
     if (isExistsEmail) {
       throw new BadRequestException({
         message: { emailExists: Errors.registrationErrors.emailExists },

@@ -38,4 +38,37 @@ export class GalleryService {
     newGallery.user = user;
     return await this.galleryRepository.save(newGallery);
   }
+
+  async addAlbumToGallery({
+    albumId,
+    galleryId,
+  }: {
+    albumId: string;
+    galleryId: string;
+  }): Promise<void> {
+    const gallery = await this.galleryRepository.findOne(
+      { id: galleryId },
+      { relations: ['albums'] },
+    );
+    console.log(gallery, 'gallery');
+
+    const album = await this.albumService.getAlbumById(albumId);
+    gallery.albums = [...gallery.albums, album];
+    this.galleryRepository.save(gallery);
+  }
+
+  async removeAlbumFromGallery({
+    albumId,
+    galleryId,
+  }: {
+    albumId: string;
+    galleryId: string;
+  }): Promise<void> {
+    const gallery = await this.galleryRepository.findOne(
+      { id: galleryId },
+      { relations: ['albums'] },
+    );
+    gallery.albums = gallery.albums.filter((el) => el.id !== albumId);
+    this.galleryRepository.save(gallery);
+  }
 }

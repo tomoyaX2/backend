@@ -20,3 +20,8 @@ export class GalleryDto {
   albums?: AlbumDto[];
   user?: UserDto;
 }
+
+export class UpdateGalleryBodyDto {
+  galleryId: string;
+  albumId: string;
+}

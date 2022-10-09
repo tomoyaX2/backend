@@ -34,7 +34,7 @@ export class Album {
   @Column({ nullable: true })
   rate?: number;
 
-  @Column()
+  @Column({ nullable: true })
   totalImages?: number;
 
   @ManyToOne(() => Gallery, (gallery) => gallery.albums)
