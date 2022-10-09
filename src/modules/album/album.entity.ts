@@ -23,10 +23,10 @@ import { Type } from '../type/type.entity';
 @Entity()
 export class Album {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id?: string;
 
   @Column({ nullable: true })
-  title: string;
+  title?: string;
 
   @Column({ nullable: true })
   views?: number;
@@ -35,7 +35,7 @@ export class Album {
   rate?: number;
 
   @Column()
-  totalImages: number;
+  totalImages?: number;
 
   @ManyToOne(() => Gallery, (gallery) => gallery.albums)
   @JoinColumn({
@@ -54,10 +54,10 @@ export class Album {
   images?: Image[];
 
   @Column({ nullable: true })
-  preview: string;
+  preview?: string;
 
   @Column({ nullable: true })
-  previewOrientation: 'horizontal' | 'vertical';
+  previewOrientation?: 'horizontal' | 'vertical';
 
   @OneToMany(() => Comment, (comment) => comment.album, {
     onDelete: 'CASCADE',
@@ -110,8 +110,8 @@ export class Album {
   tags?: Tag[];
 
   @CreateDateColumn()
-  createdDate: Date;
+  createdDate?: Date;
 
   @UpdateDateColumn()
-  updatedDate: Date;
+  updatedDate?: Date;
 }

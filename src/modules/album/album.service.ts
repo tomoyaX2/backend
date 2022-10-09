@@ -63,9 +63,19 @@ export class AlbumService {
 
     if (!ignoreViews) {
       album.views = album.views + 1;
+      this.albumRepository.save(album);
     }
-    this.albumRepository.save(album);
     return { ...album, images: _.orderBy(album.images, ['url']) };
+  }
+
+  async getPlainAlbumById(id: string): Promise<AlbumDto> {
+    const album = await this.albumRepository.findOne({
+      where: { id },
+    });
+    if (!album) {
+      throw new NotFoundException({ message: 'Album not found' });
+    }
+    return album;
   }
 
   async getAlbumForScrapperFilter(

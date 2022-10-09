@@ -1,4 +1,5 @@
 import { AlbumDto } from '../album/album.dto';
+import { UserDto } from '../users/users.dto';
 
 export class PaginatedGalleryDto {
   data: GalleryDto[];
@@ -6,8 +7,16 @@ export class PaginatedGalleryDto {
   currentPage: number;
 }
 
-export interface GalleryDto {
-  id?: string;
+export class GalleryBodyDto {
   name: string;
-  albums: AlbumDto[];
+  albumsIds: string[];
+}
+
+export class GalleryDto {
+  id: string;
+
+  name: string;
+
+  albums?: AlbumDto[];
+  user?: UserDto;
 }
