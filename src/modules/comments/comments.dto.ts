@@ -16,6 +16,5 @@ export class CommentDto {
 
 export class CommentBodyDto {
   text: string;
-  authorId: string;
   albumId: string;
 }

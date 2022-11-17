@@ -19,6 +19,11 @@ export interface DefaultPaginationQuery {
   withAlbums?: boolean;
   [AlbumFilters.Name]?: string;
 }
+
+export interface CommentsPaginationQuery extends DefaultPaginationQuery {
+  albumId: string;
+}
+
 export interface AlbumPaginationQuery extends DefaultPaginationQuery {
   [AlbumFilters.Author]?: string[];
   [AlbumFilters.Series]?: string[];

@@ -110,8 +110,8 @@ export class Album {
   tags?: Tag[];
 
   @CreateDateColumn()
-  createdDate?: Date;
+  created_date?: Date;
 
   @UpdateDateColumn()
-  updatedDate?: Date;
+  updated_date?: Date;
 }

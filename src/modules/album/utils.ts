@@ -1,6 +1,7 @@
 import { AlbumPaginationQuery } from 'src/shared/types';
 import { FindManyOptions, Repository } from 'typeorm';
 import { AlbumDto } from './album.dto';
+// import { getManager } from 'typeorm';
 
 export const buildStrictPagination = async (
   filterData: AlbumPaginationQuery,
@@ -8,13 +9,16 @@ export const buildStrictPagination = async (
 ) => {
   const searchObject = {
     relations: ['authors', 'series', 'type', 'language', 'group', 'tags'],
-    order: filterData.sortBy ? filterData.sortBy : { createdDate: 'DESC' },
+    order: filterData.sortBy ? filterData.sortBy : { created_date: 'DESC' },
     skip: (filterData.page - 1) * filterData.perPage,
     take: filterData.perPage,
   } as FindManyOptions<AlbumDto> & { title?: any };
   const activeFilters = {};
   const whereData = [];
-
+  // const queryData = await getManager().query(
+  //   `SELECT * FROM album INNER JOIN album_tags AS at on at.album_id = album.id WHERE at.tag_id != '3d0a1bd6-f9b1-439a-91ac-24529e6655ae' ORDER BY created_date LIMIT 5 OFFSET 14`,
+  // );
+  // console.log(queryData, 'queryData');
   for (const filterKey of Object.keys(filterData)) {
     const data = filterData[filterKey];
     if (

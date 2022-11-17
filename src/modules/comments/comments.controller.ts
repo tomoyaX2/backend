@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CommentBodyDto, PaginatedCommentDto } from './comments.dto';
 import { AccessTokenGuard } from '../auth/auth.guard';
@@ -14,18 +22,18 @@ export class CommentsController {
   getComments(
     @Query('page') page: string,
     @Query('perPage') perPage: string,
-    @Query('name') name: string,
+    @Query('albumId') albumId: string,
   ): Promise<PaginatedCommentDto> {
     return this.commentsService.getComments({
       page: parseInt(page),
       perPage: parseInt(perPage),
-      name,
+      albumId,
     });
   }
 
   @Post()
   @ApiBearerAuth()
-  createComment(@Body() comment: CommentBodyDto): Promise<void> {
-    return this.commentsService.saveComment(comment);
+  createComment(@Body() comment: CommentBodyDto, @Req() req): Promise<void> {
+    return this.commentsService.saveComment(comment, req.sub);
   }
 }

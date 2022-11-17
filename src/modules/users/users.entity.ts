@@ -30,7 +30,7 @@ export class User {
   @Column({ nullable: true })
   isAdmin: boolean;
 
-  @Column({ nullable: true, select: false })
+  @Column({ nullable: true })
   recovery_code: string;
 
   @Column({ nullable: true, select: false })

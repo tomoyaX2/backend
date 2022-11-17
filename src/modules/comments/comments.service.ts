@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DefaultPaginationQuery } from 'src/shared/types';
+import {
+  CommentsPaginationQuery,
+  DefaultPaginationQuery,
+} from 'src/shared/types';
 import { Repository } from 'typeorm';
 import {
   CommentBodyDto,
@@ -23,19 +26,22 @@ export class CommentsService {
   async getComments({
     page,
     perPage,
-  }: DefaultPaginationQuery): Promise<PaginatedCommentDto> {
-    const [data, total] = await this.commentsRepository.findAndCount({
-      take: perPage,
-      skip: page * perPage,
-    });
+    albumId,
+  }: CommentsPaginationQuery): Promise<PaginatedCommentDto> {
+    const [data, total] = await this.commentsRepository
+      .createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.album', 'album')
+      .where('album.id LIKE :albumId', { albumId })
+      .take(perPage)
+      .skip(perPage * page - 1)
+      .execute();
     return { data, total, currentPage: page };
   }
 
-  async saveComment({
-    text,
-    albumId,
-    authorId,
-  }: CommentBodyDto): Promise<void> {
+  async saveComment(
+    { text, albumId }: CommentBodyDto,
+    authorId: string,
+  ): Promise<void> {
     const album = await this.albumService.getAlbumById(albumId);
     const user = await this.usersService.getUserById(authorId);
 

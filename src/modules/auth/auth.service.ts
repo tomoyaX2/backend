@@ -132,7 +132,7 @@ export class AuthService {
     const user = await this.usersService.getUserById(tokenData.sub);
     if (
       !user ||
-      tokenData.code !== user.recovery_code ||
+      tokenData.code !== `${user.recovery_code}` ||
       tokenData.exp < (new Date().getTime() + 1) / 1000
     ) {
       throw new ForbiddenException(Errors.authErrors.invalidRestoreToken);
