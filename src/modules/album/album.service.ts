@@ -13,7 +13,7 @@ import { Album } from './album.entity';
 import { TypeService } from '../type/type.service';
 import { LogService } from '../log/log.service';
 import { AlbumPaginationQuery, DefaultPaginationQuery } from 'src/shared/types';
-import { buildStrictPagination } from './utils';
+import { buildStrictPagination } from './utils/search';
 import * as _ from 'lodash';
 import { BlockedAlbumService } from '../blocked/blocked.service';
 

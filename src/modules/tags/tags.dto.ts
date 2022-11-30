@@ -9,5 +9,5 @@ export class PaginatedTagsDto {
 export class TagsDto {
   id?: string;
   name: string;
-  albums: AlbumDto[];
+  albums?: AlbumDto[];
 }

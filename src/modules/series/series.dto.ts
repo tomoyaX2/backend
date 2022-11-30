@@ -9,5 +9,5 @@ export class PaginatedSeriesDto {
 export class SeriesDto {
   id: string;
   name: string;
-  albums: AlbumDto[];
+  albums?: AlbumDto[];
 }

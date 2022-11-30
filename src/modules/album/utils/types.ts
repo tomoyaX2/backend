@@ -1,0 +1,30 @@
+export interface NonUnifiedAlbum {
+  Album_id: string;
+  Album_title: string;
+  Album_views: number;
+  Album_rate: number;
+  Album_totalImages: number;
+  Album_path: string;
+  Album_downloadPath: string;
+  Album_preview: string;
+  Album_previewOrientation: 'horizontal' | 'vertical';
+  Album_created_date: string;
+  Album_updated_date: string;
+  Album_gallery_id: string;
+  Album_type_id: string;
+  Album_series_id: string;
+  Album_language_id: string;
+  Album_group_id: string;
+  Album__authors_id: string;
+  Album__authors_name: string;
+  Album__series_id: string;
+  Album__series_name: string;
+  Album__type_id: string;
+  Album__type_name: string;
+  Album__language_id: string;
+  Album__language_name: string;
+  Album__group_id: string;
+  Album__group_name: string;
+  Album__tags_id: string;
+  Album__tags_name: string;
+}
