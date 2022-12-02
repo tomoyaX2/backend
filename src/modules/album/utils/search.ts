@@ -4,7 +4,7 @@ import { LanguagesService } from 'src/modules/languages/languages.service';
 import { SeriesService } from 'src/modules/series/series.service';
 import { TagsService } from 'src/modules/tags/tags.service';
 import { AlbumPaginationQuery } from 'src/shared/types';
-import { chunkArray } from 'src/shared/utils';
+import { chunkArray, keys } from 'src/shared/utils';
 import { FindManyOptions, getManager, Repository } from 'typeorm';
 import { AlbumDto } from '../album.dto';
 import {
@@ -113,31 +113,31 @@ export const buildStrictPagination = async (
     await tagsService.getAlbumIdsByTagFilter({
       filter: filterData.tags,
       idsSet: albumIdsSet,
-    }); //get all album ids by selected tag
+    });
   }
   if (filterData.authors) {
     await authorsService.getAlbumIdsByAuthorFilter({
       filter: filterData.authors,
       idsSet: albumIdsSet,
-    }); //get all album ids by selected authors OR filter and merge with selected by tags
+    });
   }
   if (filterData.series) {
     await seriesService.getAlbumIdsBySeriesFilter({
       filter: filterData.series,
       idsSet: albumIdsSet,
-    }); //get all album ids by selected authors OR filter and merge with selected by tags
+    });
   }
   if (filterData.language) {
     await languageService.getAlbumIdsByLanguageFilter({
       filter: filterData.language,
       idsSet: albumIdsSet,
-    }); //get all album ids by selected authors OR filter and merge with selected by tags
+    });
   }
   if (filterData.group) {
     await groupService.getAlbumIdsByGroupFilter({
       filter: filterData.group,
       idsSet: albumIdsSet,
-    }); //get all album ids by selected authors OR filter and merge with selected by tags
+    });
   }
   if (filterData.title) {
     const titleSearchResult = await albumRepository
@@ -157,15 +157,6 @@ export const buildStrictPagination = async (
     }
   }
 
-  // console.time();
-  // const searchObject = {
-  //   relations: ['authors', 'series', 'type', 'language', 'group', 'tags'],
-  //   order: filterData.sortBy ? filterData.sortBy : { created_date: 'DESC' },
-  //   skip: (filterData.page - 1) * filterData.perPage,
-  //   take: filterData.perPage,
-  // } as FindManyOptions<AlbumDto> & { title?: any };
-  // const activeFilters = {};
-  // const whereData = [];
   const resultIds = [...albumIdsSet];
   const chunkedData = chunkArray(resultIds, filterData.perPage);
   const dataToBuild = chunkedData[filterData.page - 1] || [];
@@ -173,46 +164,12 @@ export const buildStrictPagination = async (
     return [[], resultIds.length];
   }
   const builtRelationsData = await getManager().query(
-    getDataWithRelations(dataToBuild),
+    getDataWithRelations(
+      dataToBuild,
+      keys(filterData.sortBy)[0] || 'created_date',
+    ),
     dataToBuild,
   );
-  // return [];
-  // for (const filterKey of Object.keys(filterData)) {
-  //   const data = filterData[filterKey];
-  //   if (
-  //     filterKey !== 'page' &&
-  //     filterKey !== 'perPage' &&
-  //     filterKey !== 'title'
-  //   ) {
-  //     if (data?.length) {
-  //       activeFilters[filterKey] = data;
-  //       whereData.push(`${filterKey}.id IN(:...${filterKey})`);
-  //     }
-  //   }
-  //   if (filterKey === 'title' && data?.length) {
-  //     whereData.push(`UPPER(title) LIKE UPPER('${data}%')`);
-  //   }
-  // }
-  // const whereString = whereData.join(' AND ');
-  // if (whereData.length) {
-  //   searchObject.join = {
-  //     alias: 'album',
-  //     leftJoin: {
-  //       tags: 'album.tags',
-  //       group: 'album.group',
-  //       authors: 'album.authors',
-  //       series: 'album.series',
-  //       type: 'album.type',
-  //       language: 'album.language',
-  //     },
-  //   };
-  //   searchObject.where = (qb) => {
-  //     qb.where(whereString, activeFilters);
-  //   };
-  // }
-  // const data = await albumRepository.findAndCount(searchObject);
-  // console.timeEnd();
-
   const result = unifySearchData(builtRelationsData);
   return [result, resultIds.length];
 };

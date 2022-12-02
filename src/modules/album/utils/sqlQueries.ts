@@ -5,7 +5,7 @@ export const getQueryWithFilteredExceptions = () =>
   `LEFT JOIN tag tags ON tags.id = album_tags.tag_id WHERE tags.id IN (SELECT tag_id FROM album_tags WHERE album_tags.tag_id = $1)) ` +
   `"distinctAlias" ORDER BY "distinctAlias"."album_created_date"  DESC, "album_id" ASC`;
 
-export const getDataWithRelations = (dataToSelect) => {
+export const getDataWithRelations = (dataToSelect, orderBy) => {
   const queryIdSymbols = dataToSelect
     .map((_, index) => `$${index + 1}`)
     .join(', ');
@@ -22,6 +22,6 @@ export const getDataWithRelations = (dataToSelect) => {
     `LEFT JOIN "language" "Album__language" ON "Album__language"."id"="Album"."language_id"  ` +
     `LEFT JOIN "group" "Album__group" ON "Album__group"."id"="Album"."group_id"  ` +
     `LEFT JOIN "album_tags" "Album_Album__tags" ON "Album_Album__tags"."album_id"="Album"."id" ` +
-    `LEFT JOIN "tag" "Album__tags" ON "Album__tags"."id"="Album_Album__tags"."tag_id" WHERE "Album"."id" IN (${queryIdSymbols}) ORDER BY "Album"."created_date" DESC`
+    `LEFT JOIN "tag" "Album__tags" ON "Album__tags"."id"="Album_Album__tags"."tag_id" WHERE "Album"."id" IN (${queryIdSymbols}) ORDER BY "Album"."${orderBy}" DESC`
   );
 };
