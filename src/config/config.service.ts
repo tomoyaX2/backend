@@ -71,7 +71,6 @@ class ConfigService {
       },
       // dropSchema: true,
       synchronize: true,
-      logging: true,
     };
   }
 }

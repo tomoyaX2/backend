@@ -1,9 +1,9 @@
-export const getQueryWithFilteredExceptions = ({ limit, offset }) =>
-  `SELECT DISTINCT "distinctAlias"."album_id" as "album_id", "distinctAlias"."album_created_date", "distinctAlias"."album_title", "distinctAlias"."tag_id" as tag_id FROM` +
+export const getQueryWithFilteredExceptions = () =>
+  `SELECT DISTINCT "distinctAlias"."album_id" as "album_id", "distinctAlias"."album_created_date", "distinctAlias"."album_title" FROM` +
   `(SELECT "album"."id" AS "album_id", "album"."title" AS "album_title", "album"."created_date" AS "album_created_date" FROM "album" "album" ` +
   `LEFT JOIN album_tags ON album_tags.album_id = album.id ` +
-  `LEFT JOIN tag tags ON tags.id = album_tags.tag_id WHERE tags.id NOT IN (SELECT tag_id FROM album_tags WHERE album_tags.tag_id = $1)) ` +
-  `"distinctAlias" ORDER BY "distinctAlias"."album_created_date"  DESC, "album_id" ASC LIMIT ${limit} OFFSET ${offset}`;
+  `LEFT JOIN tag tags ON tags.id = album_tags.tag_id WHERE tags.id IN (SELECT tag_id FROM album_tags WHERE album_tags.tag_id = $1)) ` +
+  `"distinctAlias" ORDER BY "distinctAlias"."album_created_date"  DESC, "album_id" ASC`;
 
 export const getDataWithRelations = (dataToSelect) => {
   const queryIdSymbols = dataToSelect

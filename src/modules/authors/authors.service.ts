@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { albumRelations } from 'src/shared/constants';
 import { DefaultPaginationQuery } from 'src/shared/types';
-import { Like, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { AlbumDto } from '../album/album.dto';
 import { LogService } from '../log/log.service';
 import { AuthorDto, PaginatedAuthorDto } from './authors.dto';
@@ -60,13 +60,18 @@ export class AuthorService {
   async assignAlbumToAuthor(album: AlbumDto): Promise<void> {
     for (const albumAuthor of album.authors) {
       try {
-        const targetAuthor = await this.authorRepository.findOne({
-          id: albumAuthor.id,
-        });
-        await this.authorRepository.save({
-          ...targetAuthor,
-          albums: [...(targetAuthor?.albums || []), album],
-        });
+        const targetAuthor = await this.authorRepository.findOne(
+          {
+            id: albumAuthor.id,
+          },
+          { relations: ['albums'] },
+        );
+        if (targetAuthor.albums.every((el) => el.id !== album.id)) {
+          await this.authorRepository.save({
+            ...targetAuthor,
+            albums: [...(targetAuthor?.albums || []), album],
+          });
+        }
       } catch (e) {
         this.logService.saveLog(
           `${e}, 'assign album to author error', ${album}`,
@@ -75,4 +80,30 @@ export class AuthorService {
       }
     }
   }
+
+  getAlbumIdsByAuthorFilter = async ({
+    filter,
+    idsSet,
+  }: {
+    filter: string[];
+    idsSet: Set<string>;
+  }) => {
+    const authors = await this.authorRepository.find({
+      where: { id: In(filter) },
+      relations: ['albums'],
+    });
+    const authorRelatedAlbumIds = new Set<string>();
+    for (const author of authors) {
+      for (const album of author.albums) {
+        authorRelatedAlbumIds.add(album.id); // assign album to separate Set to combine and filter album ids later
+      }
+    }
+    for (const stateAlbumId of idsSet) {
+      // get album ids
+      if (!authorRelatedAlbumIds.has(stateAlbumId)) {
+        // check if it exists at author related ids
+        idsSet.delete(stateAlbumId); // if not - remove id from original Set
+      }
+    }
+  };
 }

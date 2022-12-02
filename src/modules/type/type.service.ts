@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { albumRelations } from 'src/shared/constants';
 import { DefaultPaginationQuery } from 'src/shared/types';
-import { Like, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { AlbumDto } from '../album/album.dto';
 import { LogService } from '../log/log.service';
 import { PaginatedTypeDto, TypeDto } from './type.dto';
@@ -50,9 +50,12 @@ export class TypeService {
 
   async assignAlbumToType(album: AlbumDto): Promise<void> {
     try {
-      const targetType = await this.typesRepository.findOne({
-        id: album.type.id,
-      });
+      const targetType = await this.typesRepository.findOne(
+        {
+          id: album.type.id,
+        },
+        { relations: ['albums'] },
+      );
       await this.typesRepository.save({
         ...targetType,
         albums: [...(targetType?.albums || []), album],
@@ -64,4 +67,35 @@ export class TypeService {
       );
     }
   }
+
+  getAlbumIdsByTypesFilter = async ({
+    filter,
+    idsSet,
+    avoidIdsSet,
+  }: {
+    filter: string[];
+    idsSet: Set<string>;
+    avoidIdsSet: Set<string>;
+  }) => {
+    const types = await this.typesRepository.find({
+      where: { id: In(filter) },
+      relations: ['albums'],
+    });
+    const typesRelatedAlbumIds = new Set<string>();
+    for (const type of types) {
+      for (const album of type.albums) {
+        typesRelatedAlbumIds.add(album.id); // assign album to separate Set to combine and filter album ids later
+      }
+    }
+    for (const stateAlbumId of idsSet) {
+      // get album ids
+      if (
+        !typesRelatedAlbumIds.has(stateAlbumId) ||
+        avoidIdsSet.has(stateAlbumId)
+      ) {
+        // check if it exists at tag related ids
+        idsSet.delete(stateAlbumId); // if not - remove id from original Set
+      }
+    }
+  };
 }

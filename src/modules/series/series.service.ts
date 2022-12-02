@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { albumRelations } from 'src/shared/constants';
 import { DefaultPaginationQuery } from 'src/shared/types';
-import { Like, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { Album } from '../album/album.entity';
 import { LogService } from '../log/log.service';
 import { PaginatedSeriesDto, SeriesDto } from './series.dto';
@@ -50,9 +50,12 @@ export class SeriesService {
 
   async assignAlbumToSeries(album: Album): Promise<SeriesDto> {
     try {
-      const targetSeries = await this.seriesRepository.findOne({
-        id: album.series.id,
-      });
+      const targetSeries = await this.seriesRepository.findOne(
+        {
+          id: album.series.id,
+        },
+        { relations: ['album'] },
+      );
       return await this.seriesRepository.save({
         ...targetSeries,
         albums: [...(targetSeries?.albums || []), album],
@@ -64,4 +67,30 @@ export class SeriesService {
       );
     }
   }
+
+  getAlbumIdsBySeriesFilter = async ({
+    filter,
+    idsSet,
+  }: {
+    filter: string[];
+    idsSet: Set<string>;
+  }) => {
+    const series = await this.seriesRepository.find({
+      where: { id: In(filter) },
+      relations: ['albums'],
+    });
+    const seriesRelatedAlbumIds = new Set<string>();
+    for (const seriesItem of series) {
+      for (const album of seriesItem.albums) {
+        seriesRelatedAlbumIds.add(album.id); // assign album to separate Set to combine and filter album ids later
+      }
+    }
+    for (const stateAlbumId of idsSet) {
+      // get album ids
+      if (!seriesRelatedAlbumIds.has(stateAlbumId)) {
+        // check if it exists at tag related ids
+        idsSet.delete(stateAlbumId); // if not - remove id from original Set
+      }
+    }
+  };
 }

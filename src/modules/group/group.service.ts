@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { albumRelations } from 'src/shared/constants';
 import { DefaultPaginationQuery } from 'src/shared/types';
-import { Like, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { Album } from '../album/album.entity';
 import { LogService } from '../log/log.service';
 import { GroupDto, PaginatedGroupDto } from './group.dto';
@@ -49,9 +49,12 @@ export class GroupService {
 
   async assignAlbumToGroup(album: Album): Promise<void> {
     try {
-      const targetGroup = await this.groupRepository.findOne({
-        id: album.group.id,
-      });
+      const targetGroup = await this.groupRepository.findOne(
+        {
+          id: album.group.id,
+        },
+        { relations: ['albums'] },
+      );
       await this.groupRepository.save({
         ...targetGroup,
         albums: [...(targetGroup?.albums || []), album],
@@ -63,4 +66,30 @@ export class GroupService {
       );
     }
   }
+
+  getAlbumIdsByGroupFilter = async ({
+    filter,
+    idsSet,
+  }: {
+    filter: string[];
+    idsSet: Set<string>;
+  }) => {
+    const groups = await this.groupRepository.find({
+      where: { id: In(filter) },
+      relations: ['albums'],
+    });
+    const groupsRelatedAlbumIds = new Set<string>();
+    for (const group of groups) {
+      for (const album of group.albums) {
+        groupsRelatedAlbumIds.add(album.id); // assign album to separate Set to combine and filter album ids later
+      }
+    }
+    for (const stateAlbumId of idsSet) {
+      // get album ids
+      if (!groupsRelatedAlbumIds.has(stateAlbumId)) {
+        // check if it exists at tag related ids
+        idsSet.delete(stateAlbumId); // if not - remove id from original Set
+      }
+    }
+  };
 }

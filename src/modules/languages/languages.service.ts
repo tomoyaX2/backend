@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { albumRelations } from 'src/shared/constants';
 import { DefaultPaginationQuery } from 'src/shared/types';
-import { Like, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { AlbumDto } from '../album/album.dto';
 import { LogService } from '../log/log.service';
 import { LanguageDto, PaginatedLanguageDto } from './languages.dto';
@@ -50,10 +50,12 @@ export class LanguagesService {
 
   async assignAlbumToLanguage(album: AlbumDto): Promise<void> {
     try {
-      const targetLanguage = await this.languagesRepository.findOne({
-        id: album.language.id,
-      });
-      console.log(targetLanguage, 'targetLanguage');
+      const targetLanguage = await this.languagesRepository.findOne(
+        {
+          id: album.language.id,
+        },
+        { relations: ['albums'] },
+      );
       await this.languagesRepository.save({
         ...targetLanguage,
         albums: [...(targetLanguage?.albums || []), album],
@@ -65,4 +67,30 @@ export class LanguagesService {
       );
     }
   }
+
+  getAlbumIdsByLanguageFilter = async ({
+    filter,
+    idsSet,
+  }: {
+    filter: string[];
+    idsSet: Set<string>;
+  }) => {
+    const languages = await this.languagesRepository.find({
+      where: { id: In(filter) },
+      relations: ['albums'],
+    });
+    const languagesRelatedAlbumIds = new Set<string>();
+    for (const language of languages) {
+      for (const album of language.albums) {
+        languagesRelatedAlbumIds.add(album.id); // assign album to separate Set to combine and filter album ids later
+      }
+    }
+    for (const stateAlbumId of idsSet) {
+      // get album ids
+      if (!languagesRelatedAlbumIds.has(stateAlbumId)) {
+        // check if it exists at tag related ids
+        idsSet.delete(stateAlbumId); // if not - remove id from original Set
+      }
+    }
+  };
 }

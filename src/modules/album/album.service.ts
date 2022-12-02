@@ -94,6 +94,11 @@ export class AlbumService {
     const [data, total] = await buildStrictPagination(
       albumParams,
       this.albumRepository,
+      this.tagsService,
+      this.authorsService,
+      this.seriesService,
+      this.languageService,
+      this.groupService,
     );
     return { data: data ?? [], total, currentPage: albumParams.page } as any;
   }

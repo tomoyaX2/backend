@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { albumRelations } from 'src/shared/constants';
 import { DefaultPaginationQuery } from 'src/shared/types';
-import { Like, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { AlbumDto } from '../album/album.dto';
 import { LogService } from '../log/log.service';
 import { PaginatedTagsDto, TagsDto } from './tags.dto';
@@ -63,13 +63,12 @@ export class TagsService {
   async assignAlbumToTag(album: AlbumDto): Promise<void> {
     for (const albumTag of album.tags) {
       try {
-        const targetTag = await this.tagsRepository.findOne({
-          id: albumTag.id,
-        });
-        await this.tagsRepository.save({
-          ...targetTag,
-          albums: [...(targetTag?.albums || []), album],
-        });
+        await this.tagsRepository.findOne(
+          {
+            id: albumTag.id,
+          },
+          { relations: ['albums'] },
+        );
       } catch (e) {
         this.logService.saveLog(
           `${e}, 'assign album to tag error', ${JSON.stringify(album)}`,
@@ -78,4 +77,30 @@ export class TagsService {
       }
     }
   }
+
+  getAlbumIdsByTagFilter = async ({
+    filter,
+    idsSet,
+  }: {
+    filter: string[];
+    idsSet: Set<string>;
+  }) => {
+    const tags = await this.tagsRepository.find({
+      where: { id: In(filter) },
+      relations: ['albums'],
+    });
+    const tagRelatedAlbumIds = new Set<string>();
+    for (const tag of tags) {
+      for (const album of tag.albums) {
+        tagRelatedAlbumIds.add(album.id); // assign album to separate Set to combine and filter album ids later
+      }
+    }
+    for (const stateAlbumId of idsSet) {
+      // get album ids
+      if (!tagRelatedAlbumIds.has(stateAlbumId)) {
+        // check if it exists at tag related ids
+        idsSet.delete(stateAlbumId); // if not - remove id from original Set
+      }
+    }
+  };
 }
