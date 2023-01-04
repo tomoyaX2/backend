@@ -53,4 +53,13 @@ export class AuthController {
   restorePassword(@Body() body: RestorePasswordDto): Promise<void> {
     return this.authService.restorePassword(body);
   }
+
+  @Get('screencasts')
+  screencasts(): { id: number; url: string }[] {
+    return [
+      { id: 1, url: 'https://www.youtube.com/embed/YdMgw85la4s' },
+      { id: 2, url: 'https://www.youtube.com/embed/T8ouqnIaLpM' },
+      { id: 3, url: 'https://www.youtube.com/embed/OIk2H2DQFJ4' },
+    ];
+  }
 }
