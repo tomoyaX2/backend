@@ -57,4 +57,12 @@ export class UsersService {
     user.isAdmin = status;
     await this.usersRepository.save(user);
   }
+
+  deleteUsers = async ({ userIds }: { userIds: string[] }) => {
+    try {
+      await this.usersRepository.delete(userIds);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 }

@@ -103,4 +103,12 @@ export class TagsService {
       }
     }
   };
+
+  deleteTags = async ({ tagIds }: { tagIds: string[] }) => {
+    try {
+      await this.tagsRepository.delete(tagIds);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 }

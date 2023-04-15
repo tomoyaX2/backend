@@ -1,7 +1,17 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiQuery } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  ParseArrayPipe,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { LanguageDto, PaginatedLanguageDto } from './languages.dto';
 import { LanguagesService } from './languages.service';
+import { AccessTokenGuard } from '../auth/auth.guard';
 
 @Controller('languages')
 export class LanguagesController {
@@ -35,5 +45,19 @@ export class LanguagesController {
   @Post()
   createLanguage(@Body() language: LanguageDto): Promise<LanguageDto> {
     return this.languageService.createLanguage(language);
+  }
+
+  @Delete()
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @ApiQuery({
+    name: 'languagesId',
+    type: [String],
+    required: true,
+  })
+  deleteSeries(
+    @Query('languagesId', ParseArrayPipe) languagesId: string[],
+  ): Promise<void> {
+    return this.languageService.deleteLanguages({ languagesId });
   }
 }

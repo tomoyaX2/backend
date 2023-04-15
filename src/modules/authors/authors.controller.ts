@@ -1,7 +1,17 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  ParseArrayPipe,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthorService } from './authors.service';
 import { AuthorDto, PaginatedAuthorDto } from './authors.dto';
-import { ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { AccessTokenGuard } from '../auth/auth.guard';
 
 @Controller('authors')
 export class AuthorController {
@@ -35,5 +45,20 @@ export class AuthorController {
   @Post()
   createAuthors(@Body() author: AuthorDto): Promise<AuthorDto> {
     return this.authorService.createAuthor(author);
+  }
+
+  @Delete()
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @ApiQuery({
+    name: 'authorIds',
+    type: [String],
+    required: true,
+    isArray: true,
+  })
+  removeAuthors(
+    @Query('authorIds', ParseArrayPipe) authorIds: string[],
+  ): Promise<void> {
+    return this.authorService.deleteAutors({ authorIds });
   }
 }

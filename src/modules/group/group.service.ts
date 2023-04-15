@@ -92,4 +92,12 @@ export class GroupService {
       }
     }
   };
+
+  deleteGroup = async ({ groupIds }: { groupIds: string[] }) => {
+    try {
+      await this.groupRepository.delete(groupIds);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 }

@@ -93,4 +93,12 @@ export class SeriesService {
       }
     }
   };
+
+  deleteSeries = async ({ seriesIds }: { seriesIds: string[] }) => {
+    try {
+      await this.seriesRepository.delete(seriesIds);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 }

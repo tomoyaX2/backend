@@ -1,7 +1,16 @@
-import { Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiQuery } from '@nestjs/swagger';
+import {
+  Controller,
+  Delete,
+  Get,
+  ParseArrayPipe,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { PaginatedTypeDto, TypeDto } from './type.dto';
 import { TypeService } from './type.service';
+import { AccessTokenGuard } from '../auth/auth.guard';
 
 @Controller('types')
 export class TypeController {
@@ -35,5 +44,19 @@ export class TypeController {
   @Post()
   createType(type: TypeDto): Promise<TypeDto> {
     return this.typeService.createType(type);
+  }
+
+  @Delete()
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @ApiQuery({
+    name: 'typeIds',
+    type: [String],
+    required: true,
+  })
+  deleteTags(
+    @Query('typeIds', ParseArrayPipe) typeIds: string[],
+  ): Promise<void> {
+    return this.typeService.deleteTypes({ typeIds });
   }
 }

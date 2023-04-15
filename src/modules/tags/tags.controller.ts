@@ -1,7 +1,17 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiQuery } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  ParseArrayPipe,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { PaginatedTagsDto, TagsDto } from './tags.dto';
 import { TagsService } from './tags.service';
+import { AccessTokenGuard } from '../auth/auth.guard';
 
 @Controller('tags')
 export class TagsController {
@@ -35,5 +45,17 @@ export class TagsController {
   @Post()
   saveTag(@Body() tag: TagsDto) {
     return this.tagsService.saveTag(tag);
+  }
+
+  @Delete()
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @ApiQuery({
+    name: 'tagIds',
+    type: [String],
+    required: true,
+  })
+  deleteTags(@Query('tagIds', ParseArrayPipe) tagIds: string[]): Promise<void> {
+    return this.tagsService.deleteTags({ tagIds });
   }
 }

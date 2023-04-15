@@ -1,7 +1,17 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiQuery } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  ParseArrayPipe,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { PaginatedSeriesDto, SeriesDto } from './series.dto';
 import { SeriesService } from './series.service';
+import { AccessTokenGuard } from '../auth/auth.guard';
 
 @Controller('series')
 export class SeriesController {
@@ -37,5 +47,19 @@ export class SeriesController {
     try {
       return this.seriesService.createSeries(series);
     } catch (e) {}
+  }
+
+  @Delete()
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @ApiQuery({
+    name: 'seriesIds',
+    type: [String],
+    required: true,
+  })
+  deleteSeries(
+    @Query('seriesIds', ParseArrayPipe) seriesIds: string[],
+  ): Promise<void> {
+    return this.seriesService.deleteSeries({ seriesIds });
   }
 }

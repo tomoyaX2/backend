@@ -93,4 +93,12 @@ export class LanguagesService {
       }
     }
   };
+
+  deleteLanguages = async ({ languagesId }: { languagesId: string[] }) => {
+    try {
+      await this.languagesRepository.delete(languagesId);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 }

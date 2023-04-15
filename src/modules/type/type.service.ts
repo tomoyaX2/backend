@@ -98,4 +98,12 @@ export class TypeService {
       }
     }
   };
+
+  deleteTypes = async ({ typeIds }: { typeIds: string[] }) => {
+    try {
+      await this.typesRepository.delete(typeIds);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 }

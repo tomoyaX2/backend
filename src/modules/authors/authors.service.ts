@@ -106,4 +106,12 @@ export class AuthorService {
       }
     }
   };
+
+  deleteAutors = async ({ authorIds }: { authorIds: string[] }) => {
+    try {
+      await this.authorRepository.delete(authorIds);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 }

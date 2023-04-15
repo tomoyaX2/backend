@@ -6,6 +6,8 @@ import {
   Post,
   Query,
   UseGuards,
+  Delete,
+  ParseArrayPipe,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AccessTokenGuard } from '../auth/auth.guard';
@@ -50,5 +52,19 @@ export class UsersController {
   @Post('change-admin-status')
   changeAdminStatus(@Body() body: ChangeAdminStatusDto): Promise<void> {
     return this.usersService.changeAdminStatus(body);
+  }
+
+  @Delete()
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @ApiQuery({
+    name: 'userIds',
+    type: [String],
+    required: true,
+  })
+  deleteTags(
+    @Query('userIds', ParseArrayPipe) userIds: string[],
+  ): Promise<void> {
+    return this.usersService.deleteUsers({ userIds });
   }
 }
