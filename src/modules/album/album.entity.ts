@@ -37,7 +37,9 @@ export class Album {
   @Column({ nullable: true })
   totalImages?: number;
 
-  @ManyToOne(() => Gallery, (gallery) => gallery.albums)
+  @ManyToOne(() => Gallery, (gallery) => gallery.albums, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({
     name: 'gallery_id',
     referencedColumnName: 'id',

@@ -19,7 +19,7 @@ export class Gallery {
   @OneToMany(() => Album, (album) => album.gallery)
   albums?: Album[];
 
-  @ManyToOne(() => User, (user) => user.galleries)
+  @ManyToOne(() => User, (user) => user.galleries, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user?: User;
 }
