@@ -24,16 +24,18 @@ export class FileService {
     imageData,
     userId,
   }: {
-    imageData: string;
+    imageData: Buffer;
     userId: string;
   }) {
+    const imageUrl = `users/${userId}/avatar.png`;
     const bucketParams = {
       Bucket: 'scrapper-images-data',
-      Key: `users/${userId}`,
+      Key: imageUrl,
       Body: imageData,
       ACL: 'public-read',
     };
 
     await this.s3Client.send(new PutObjectCommand(bucketParams));
+    return { imageUrl };
   }
 }

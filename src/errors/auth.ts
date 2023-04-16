@@ -55,4 +55,7 @@ export const Errors = {
       statusCode: HttpStatus.FORBIDDEN,
     },
   },
+  fileSizeExceed: {
+    message: 'File size cannot be more than 5 Mb',
+  },
 };

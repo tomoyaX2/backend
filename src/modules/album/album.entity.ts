@@ -79,19 +79,19 @@ export class Album {
   })
   authors?: Author[];
 
-  @ManyToOne(() => Type, (type) => type.albums)
+  @ManyToOne(() => Type, (type) => type.albums, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'type_id', referencedColumnName: 'id' })
   type?: Type;
 
-  @ManyToOne(() => Series)
+  @ManyToOne(() => Series, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'series_id', referencedColumnName: 'id' })
   series?: Series;
 
-  @ManyToOne(() => Language)
+  @ManyToOne(() => Language, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'language_id', referencedColumnName: 'id' })
   language?: Language;
 
-  @ManyToOne(() => Group)
+  @ManyToOne(() => Group, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'group_id', referencedColumnName: 'id' })
   group?: Group;
 

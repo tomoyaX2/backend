@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { FileController } from './file.controller';
 import { FileService } from './file.service';
 
@@ -8,4 +8,10 @@ import { FileService } from './file.service';
   providers: [FileService],
   exports: [FileService],
 })
-export class FileModule {}
+export class FileModule implements OnModuleInit {
+  constructor(private fileService: FileService) {}
+
+  onModuleInit() {
+    this.fileService.initS3();
+  }
+}

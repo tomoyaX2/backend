@@ -4,15 +4,28 @@ import {
   Get,
   Param,
   Post,
+  Patch,
   Query,
   UseGuards,
   Delete,
   ParseArrayPipe,
+  UploadedFile,
+  UseInterceptors,
+  Req,
+  HttpCode,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiQuery, ApiBody } from '@nestjs/swagger';
 import { AccessTokenGuard } from '../auth/auth.guard';
-import { PaginatedUsersDto, UserDto, ChangeAdminStatusDto } from './users.dto';
+import {
+  PaginatedUsersDto,
+  UserDto,
+  ChangeAdminStatusDto,
+  ChangeUserDataDto,
+} from './users.dto';
 import { UsersService } from './users.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileSizeValidationPipe } from '../file/validationPipe';
+import { ChangeUserDataGuard } from './users.guard';
 
 @Controller('users')
 export class UsersController {
@@ -49,7 +62,7 @@ export class UsersController {
 
   @ApiBearerAuth()
   @UseGuards(AccessTokenGuard)
-  @Post('change-admin-status')
+  @Patch('change-admin-status')
   changeAdminStatus(@Body() body: ChangeAdminStatusDto): Promise<void> {
     return this.usersService.changeAdminStatus(body);
   }
@@ -66,5 +79,44 @@ export class UsersController {
     @Query('userIds', ParseArrayPipe) userIds: string[],
   ): Promise<void> {
     return this.usersService.deleteUsers({ userIds });
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @Patch('upload-avatar')
+  @HttpCode(200)
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'base64',
+        },
+      },
+    },
+  })
+  uploadFile(
+    @UploadedFile(FileSizeValidationPipe) file: Express.Multer.File,
+    @Req() req,
+  ) {
+    this.usersService.saveUserAvatar({
+      imageData: file.buffer,
+      userId: req.sub,
+    });
+    return '';
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard, ChangeUserDataGuard)
+  @Patch('update-profile')
+  @HttpCode(200)
+  updateUserData(@Body() userData: ChangeUserDataDto, @Req() req) {
+    return this.usersService.updateUserProfileData({
+      userData,
+      userId: req.sub,
+    });
   }
 }

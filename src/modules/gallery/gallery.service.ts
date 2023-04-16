@@ -31,9 +31,11 @@ export class GalleryService {
       name: gallery.name,
     });
     const user = await this.usersService.getUserById(userId);
-    for (const albumId of gallery.albumsIds) {
-      const album = await this.albumService.getPlainAlbumById(albumId);
-      newGallery.albums = [...(newGallery.albums || []), album];
+    if (gallery?.albumsIds) {
+      for (const albumId of gallery.albumsIds) {
+        const album = await this.albumService.getPlainAlbumById(albumId);
+        newGallery.albums = [...(newGallery.albums || []), album];
+      }
     }
     newGallery.user = user;
     return await this.galleryRepository.save(newGallery);
@@ -50,7 +52,6 @@ export class GalleryService {
       { id: galleryId },
       { relations: ['albums'] },
     );
-    console.log(gallery, 'gallery');
 
     const album = await this.albumService.getAlbumById(albumId);
     gallery.albums = [...gallery.albums, album];

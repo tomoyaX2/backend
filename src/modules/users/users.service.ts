@@ -1,14 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { omit } from 'src/shared/utils';
+import { keys, omit } from 'src/shared/utils';
 import { FindOperator, Like, Repository } from 'typeorm';
-import { PaginatedUsersDto, UserDto } from './users.dto';
+import { ChangeUserDataDto, PaginatedUsersDto, UserDto } from './users.dto';
 import { User } from './users.entity';
+import { FileService } from '../file/file.service';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<UserDto>,
+    private fileService: FileService,
   ) {}
 
   async getUsers({ page, perPage, name, email }): Promise<PaginatedUsersDto> {
@@ -64,5 +70,55 @@ export class UsersService {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  saveUserAvatar = async ({
+    imageData,
+    userId,
+  }: {
+    imageData: Buffer;
+    userId: string;
+  }) => {
+    const { imageUrl } = await this.fileService.uploadUserAvatarImage({
+      imageData,
+      userId,
+    });
+    const user = await this.usersRepository.findOne({
+      id: userId,
+    });
+    user.avatarUrl = imageUrl;
+    await this.usersRepository.save(user);
+  };
+
+  updateUserProfileData = async ({
+    userData,
+    userId,
+  }: {
+    userData: ChangeUserDataDto;
+    userId: string;
+  }) => {
+    const user = await this.usersRepository.findOne({
+      id: userId,
+    });
+    if (!user) {
+      throw new NotFoundException({ message: 'User not found' });
+    }
+    if (userData.email !== user.email) {
+      const record = await this.getUserByEmail(userData.email);
+      if (record) {
+        throw new BadRequestException({ message: 'Email is already taken' });
+      }
+    }
+    if (userData.login !== user.login) {
+      const record = await this.getUserByLogin(userData.login);
+      if (record) {
+        throw new BadRequestException({ message: 'Login is already taken' });
+      }
+    }
+    for (const userFieldToUpdate of keys(userData)) {
+      user[userFieldToUpdate] = userData[userFieldToUpdate];
+    }
+    await this.usersRepository.save(user);
+    return '';
   };
 }

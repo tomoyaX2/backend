@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Comment } from '../comments/comments.entity';
 import { Gallery } from '../gallery/gallery.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -16,6 +17,7 @@ export class User {
   name: string;
 
   @Column({ length: 255 })
+  @Exclude()
   password: string;
 
   @Column({ default: true })

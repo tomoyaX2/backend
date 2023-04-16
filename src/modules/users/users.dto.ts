@@ -26,3 +26,10 @@ export class ChangeAdminStatusDto {
   id: string;
   status: boolean;
 }
+
+export class ChangeUserDataDto {
+  login?: string;
+  phone?: string;
+  name?: string;
+  email?: string;
+}
