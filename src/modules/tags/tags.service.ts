@@ -63,12 +63,18 @@ export class TagsService {
   async assignAlbumToTag(album: AlbumDto): Promise<void> {
     for (const albumTag of album.tags) {
       try {
-        await this.tagsRepository.findOne(
+        const targetTag = await this.tagsRepository.findOne(
           {
             id: albumTag.id,
           },
           { relations: ['albums'] },
         );
+        if (targetTag.albums.every((el) => el.id !== album.id)) {
+          await this.tagsRepository.save({
+            ...targetTag,
+            albums: [...(targetTag?.albums || []), album],
+          });
+        }
       } catch (e) {
         this.logService.saveLog(
           `${e}, 'assign album to tag error', ${JSON.stringify(album)}`,
