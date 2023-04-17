@@ -12,6 +12,8 @@ import { TypeModule } from '../type/type.module';
 import { AlbumController } from './album.controller';
 import { Album } from './album.entity';
 import { AlbumService } from './album.service';
+import { UsersModule } from '../users/users.module';
+import { RateModule } from '../rate/rade.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { AlbumService } from './album.service';
     TypeModule,
     LogModule,
     BlockedAlbumModule,
+    UsersModule,
+    RateModule,
   ],
   controllers: [AlbumController],
   providers: [AlbumService],

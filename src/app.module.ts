@@ -20,6 +20,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { BlockedAlbumModule } from './modules/blocked/blocked.module';
 import { GalleryModule } from './modules/gallery/gallery.module';
+import { RateModule } from './modules/rate/rade.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { GalleryModule } from './modules/gallery/gallery.module';
     MailModule,
     BlockedAlbumModule,
     GalleryModule,
+    RateModule,
   ],
   controllers: [AppController],
   providers: [AppService],

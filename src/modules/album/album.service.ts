@@ -16,6 +16,8 @@ import { AlbumPaginationQuery, DefaultPaginationQuery } from 'src/shared/types';
 import { buildStrictPagination } from './utils/search';
 import * as _ from 'lodash';
 import { BlockedAlbumService } from '../blocked/blocked.service';
+import { UsersService } from '../users/users.service';
+import { RateService } from '../rate/rate.service';
 
 @Injectable()
 export class AlbumService {
@@ -30,6 +32,8 @@ export class AlbumService {
     private imageService: ImageService,
     private typeService: TypeService,
     private logService: LogService,
+    private usersService: UsersService,
+    private rateService: RateService,
     private blockedAlbumService: BlockedAlbumService,
   ) {}
 
@@ -65,7 +69,12 @@ export class AlbumService {
       album.views = album.views + 1;
       this.albumRepository.save(album);
     }
-    return { ...album, images: _.orderBy(album.images, ['url']) };
+    console.log(album, 'album');
+    return {
+      ...album,
+      rate: album?.rate || 0,
+      images: _.orderBy(album.images, ['url']),
+    };
   }
 
   async getPlainAlbumById(id: string): Promise<AlbumDto> {
@@ -206,5 +215,25 @@ export class AlbumService {
     const album = await this.albumRepository.findOne({ id });
     await this.blockedAlbumService.blockAlbum({ name: album.title });
     return this.albumRepository.delete(id);
+  };
+
+  getRateAlbum = async ({ albumId, userId }) => {
+    const album = await this.albumRepository.findOne(
+      { id: albumId },
+      { relations: ['rates'] },
+    );
+    const user = await this.usersService.getUserById(userId, ['rates']);
+    const result = await this.rateService.getRate({ album, user });
+    return result;
+  };
+
+  setRateAlbum = async ({ albumId, userId, rate }) => {
+    const album = await this.albumRepository.findOne(
+      { id: albumId },
+      { relations: ['rates'] },
+    );
+    const user = await this.usersService.getUserById(userId, ['rates']);
+    const result = await this.rateService.saveRate({ album, user, rate });
+    return result;
   };
 }

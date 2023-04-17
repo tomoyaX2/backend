@@ -6,13 +6,14 @@ import {
   Param,
   Post,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { HitomiFields } from 'src/shared/enums/HitomiFields';
 import { DeleteResult } from 'typeorm';
 import { AccessTokenGuard } from '../auth/auth.guard';
-import { AlbumDto, PaginatedAlbumDto, SearchDto } from './album.dto';
+import { AlbumDto, PaginatedAlbumDto, RateDto, SearchDto } from './album.dto';
 import { AlbumService } from './album.service';
 
 @Controller('albums')
@@ -102,5 +103,33 @@ export class AlbumController {
   @UseGuards(AccessTokenGuard)
   deleteAlbumById(@Param('albumId') albumId: string): Promise<DeleteResult> {
     return this.albumService.deleteAlbumById(albumId);
+  }
+
+  @Get(':albumId/rate')
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  getRateAlbum(
+    @Param('albumId') albumId: string,
+    @Req() req,
+  ): Promise<RateDto> {
+    return this.albumService.getRateAlbum({
+      albumId,
+      userId: req.sub,
+    });
+  }
+
+  @Post(':albumId/rate')
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  rateAlbum(
+    @Param('albumId') albumId: string,
+    @Req() req,
+    @Body() body: RateDto,
+  ): Promise<void> {
+    return this.albumService.setRateAlbum({
+      albumId,
+      userId: req.sub,
+      rate: body.rate,
+    });
   }
 }

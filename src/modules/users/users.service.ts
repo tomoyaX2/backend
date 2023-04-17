@@ -9,6 +9,7 @@ import { FindOperator, Like, Repository } from 'typeorm';
 import { ChangeUserDataDto, PaginatedUsersDto, UserDto } from './users.dto';
 import { User } from './users.entity';
 import { FileService } from '../file/file.service';
+import { RateDto } from '../album/album.dto';
 @Injectable()
 export class UsersService {
   constructor(
@@ -29,10 +30,13 @@ export class UsersService {
     return { data, total, currentPage: page };
   }
 
-  async getUserById(id: string): Promise<UserDto> {
-    const data = await this.usersRepository.findOne({
-      id,
-    });
+  async getUserById(id: string, relations?: string[]): Promise<UserDto> {
+    const data = await this.usersRepository.findOne(
+      {
+        id,
+      },
+      { relations },
+    );
     return omit<UserDto>(data, ['password']);
   }
 
@@ -120,5 +124,19 @@ export class UsersService {
     }
     await this.usersRepository.save(user);
     return '';
+  };
+
+  assignRateToUser = async ({
+    rate,
+    userId,
+  }: {
+    rate: RateDto;
+    userId: string;
+  }) => {
+    const user = await this.getUserById(userId);
+    console.log(user, 'user');
+    user.rates = [...user.rates, rate];
+    this.usersRepository.save(user);
+    return user;
   };
 }

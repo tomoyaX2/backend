@@ -1,7 +1,15 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  JoinTable,
+  ManyToMany,
+} from 'typeorm';
 import { Comment } from '../comments/comments.entity';
 import { Gallery } from '../gallery/gallery.entity';
 import { Exclude } from 'class-transformer';
+import { Rate } from '../rate/rate.entity';
 
 @Entity()
 export class User {
@@ -51,8 +59,11 @@ export class User {
   galleries: Gallery[];
 
   @OneToMany(() => Comment, (comment) => comment.author, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+    onUpdate: 'SET NULL',
   })
   comments: Comment[];
+
+  @OneToMany(() => Rate, (rate) => rate.user)
+  rates: Rate[];
 }

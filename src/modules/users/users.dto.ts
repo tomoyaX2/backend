@@ -1,3 +1,4 @@
+import { RateDto } from '../album/album.dto';
 import { CommentDto } from '../comments/comments.dto';
 
 export class PaginatedUsersDto {
@@ -20,6 +21,7 @@ export class UserDto {
   next_recovery_request_in?: string;
   comments?: CommentDto[];
   isAdmin?: boolean;
+  rates?: RateDto[];
 }
 
 export class ChangeAdminStatusDto {

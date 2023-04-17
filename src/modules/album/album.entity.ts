@@ -19,6 +19,7 @@ import { Language } from '../languages/languages.entity';
 import { Series } from '../series/series.entity';
 import { Tag } from '../tags/tags.entity';
 import { Type } from '../type/type.entity';
+import { Rate } from '../rate/rate.entity';
 
 @Entity()
 export class Album {
@@ -31,8 +32,14 @@ export class Album {
   @Column({ nullable: true })
   views?: number;
 
-  @Column({ nullable: true })
-  rate?: number;
+  @OneToMany(() => Rate, (rate) => rate.album)
+  rates: Rate[];
+
+  get rate(): number {
+    return (
+      this.rates.reduce((acc, curr) => acc + curr.rate, 0) / this.rates.length
+    );
+  }
 
   @Column({ nullable: true })
   totalImages?: number;

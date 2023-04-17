@@ -7,6 +7,7 @@ import { LanguageDto } from '../languages/languages.dto';
 import { SeriesDto } from '../series/series.dto';
 import { TagsDto } from '../tags/tags.dto';
 import { TypeDto } from '../type/type.dto';
+import { UserDto } from '../users/users.dto';
 
 export interface Sort {
   views?: 'DESC';
@@ -38,6 +39,7 @@ export class AlbumDto {
   preview?: string;
   downloadPath?: string;
   totalImages?: number;
+  rates?: RateDto[];
 }
 
 export class SearchDto {
@@ -51,4 +53,8 @@ export class SearchDto {
   groups: string[];
   types: string[];
   sortBy: Sort;
+}
+
+export class RateDto {
+  rate: number;
 }
