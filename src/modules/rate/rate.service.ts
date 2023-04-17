@@ -27,11 +27,11 @@ export class RateService {
       },
       relations: ['album', 'user'],
     });
-
     if (result) {
       result.rate = rate;
-      await this.rateRepository.save(result);
+      return await this.rateRepository.save(result);
     }
+    return await this.rateRepository.save({ rate, user, album });
   };
 
   getRate = async ({ user, album }: { user: UserDto; album: AlbumDto }) => {

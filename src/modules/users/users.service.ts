@@ -83,7 +83,6 @@ export class UsersService {
     imageData: Buffer;
     userId: string;
   }) => {
-    console.log(imageData, 'data');
     const { imageUrl } = await this.fileService.uploadUserAvatarImage({
       imageData,
       userId,
@@ -91,7 +90,7 @@ export class UsersService {
     const user = await this.usersRepository.findOne({
       id: userId,
     });
-    user.avatarUrl = imageUrl;
+    user.avatarUrl = `${process.env.CDN_URL}/${imageUrl}`;
     await this.usersRepository.save(user);
   };
 
@@ -135,7 +134,6 @@ export class UsersService {
     userId: string;
   }) => {
     const user = await this.getUserById(userId);
-    console.log(user, 'user');
     user.rates = [...user.rates, rate];
     this.usersRepository.save(user);
     return user;

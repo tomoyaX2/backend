@@ -58,6 +58,7 @@ export class AlbumService {
         'tags',
         'comments',
         'type',
+        'rates',
       ],
       where: { id },
     });
@@ -69,7 +70,6 @@ export class AlbumService {
       album.views = album.views + 1;
       this.albumRepository.save(album);
     }
-    console.log(album, 'album');
     return {
       ...album,
       rate: album?.rate || 0,
@@ -233,7 +233,6 @@ export class AlbumService {
       { relations: ['rates'] },
     );
     const user = await this.usersService.getUserById(userId, ['rates']);
-    const result = await this.rateService.saveRate({ album, user, rate });
-    return result;
+    await this.rateService.saveRate({ album, user, rate });
   };
 }

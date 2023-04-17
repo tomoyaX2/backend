@@ -36,9 +36,11 @@ export class Album {
   rates: Rate[];
 
   get rate(): number {
-    return (
-      this.rates.reduce((acc, curr) => acc + curr.rate, 0) / this.rates.length
-    );
+    const result =
+      this.rates?.reduce((acc, curr) => acc + curr.rate, 0) /
+        this.rates?.length || 1;
+
+    return result;
   }
 
   @Column({ nullable: true })
