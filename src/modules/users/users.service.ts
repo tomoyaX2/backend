@@ -83,6 +83,7 @@ export class UsersService {
     imageData: Buffer;
     userId: string;
   }) => {
+    console.log(imageData, 'data');
     const { imageUrl } = await this.fileService.uploadUserAvatarImage({
       imageData,
       userId,

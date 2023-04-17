@@ -13,6 +13,7 @@ import {
   UseInterceptors,
   Req,
   HttpCode,
+  Headers,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiConsumes, ApiQuery, ApiBody } from '@nestjs/swagger';
 import { AccessTokenGuard } from '../auth/auth.guard';
@@ -83,21 +84,10 @@ export class UsersController {
 
   @ApiBearerAuth()
   @UseGuards(AccessTokenGuard)
-  @Patch('upload-avatar')
+  @Post('upload-avatar')
   @HttpCode(200)
   @UseInterceptors(FileInterceptor('file'))
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'base64',
-        },
-      },
-    },
-  })
+  @ApiConsumes('application/octet-stream')
   uploadFile(
     @UploadedFile(FileSizeValidationPipe) file: Express.Multer.File,
     @Req() req,
