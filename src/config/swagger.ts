@@ -6,6 +6,7 @@ export const initSwagger = (app: INestApplication) => {
     .setTitle('Scrapper')
     .setDescription('Scrapper API schema')
     .setVersion('1.0')
+    .addServer(process.env.SWAGGER_URL || '/backend')
     .addBearerAuth({ type: 'apiKey', name: 'access_token', in: 'header' })
     .build();
   const document = SwaggerModule.createDocument(app, config);
