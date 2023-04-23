@@ -29,6 +29,7 @@ export class TagsService {
       skip: (page - 1) * perPage,
       order: { name: 'ASC' },
     });
+
     return { data, total, currentPage: page };
   }
 
@@ -72,6 +73,7 @@ export class TagsService {
         if (targetTag.albums.every((el) => el.id !== album.id)) {
           await this.tagsRepository.save({
             ...targetTag,
+            albumsCount: targetTag?.albumsCount + 1 || 1,
             albums: [...(targetTag?.albums || []), album],
           });
         }

@@ -65,7 +65,6 @@ export class AlbumService {
     if (!album) {
       throw new NotFoundException({ message: 'Album not found' });
     }
-
     if (!ignoreViews) {
       album.views = album.views + 1;
       this.albumRepository.save(album);

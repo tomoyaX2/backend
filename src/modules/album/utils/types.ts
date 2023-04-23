@@ -27,4 +27,5 @@ export interface NonUnifiedAlbum {
   Album__group_name: string;
   Album__tags_id: string;
   Album__tags_name: string;
+  Album__tags_albumsCount: number;
 }

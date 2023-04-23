@@ -14,6 +14,9 @@ export class Tag {
   @Column({ unique: true })
   name: string;
 
+  @Column({ nullable: true })
+  albumsCount: number;
+
   @ManyToMany(() => Album, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinTable({
     name: 'tag_albums',

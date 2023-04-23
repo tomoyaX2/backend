@@ -29,7 +29,13 @@ const normalizeAlbum = (item: NonUnifiedAlbum): AlbumDto => {
     preview: item.Album_preview,
     downloadPath: item.Album_downloadPath,
     totalImages: item.Album_totalImages,
-    tags: [{ id: item.Album__tags_id, name: item.Album__tags_name }],
+    tags: [
+      {
+        id: item.Album__tags_id,
+        name: item.Album__tags_name,
+        albumsCount: item.Album__tags_albumsCount,
+      },
+    ],
     // comments
   };
 };
@@ -52,6 +58,7 @@ const unifySearchData = (searchData: NonUnifiedAlbum[]): AlbumDto[] => {
         const newTag = {
           id: item.Album__tags_id,
           name: item.Album__tags_name,
+          albumsCount: item.Album__tags_albumsCount,
         };
         result.set(item.Album_id, {
           ...target,
