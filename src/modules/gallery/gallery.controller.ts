@@ -12,6 +12,7 @@ import {
   GalleryBodyDto,
   GalleryDto,
   UpdateGalleryBodyDto,
+  UpdateMaxAlbumAmountDto,
 } from './gallery.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { AccessTokenGuard } from '../auth/auth.guard';
@@ -23,8 +24,8 @@ export class GalleryController {
   @UseGuards(AccessTokenGuard)
   @ApiBearerAuth()
   @Get()
-  getGallery(@Req() req): Promise<GalleryDto[]> {
-    return this.galleryService.getGallery(req.sub);
+  getGalleries(@Req() req): Promise<GalleryDto[]> {
+    return this.galleryService.getGalleries(req.sub);
   }
 
   @UseGuards(AccessTokenGuard)
@@ -42,6 +43,13 @@ export class GalleryController {
   @Patch('add-album')
   updateGallery(@Body() body: UpdateGalleryBodyDto): Promise<void> {
     return this.galleryService.addAlbumToGallery(body);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth()
+  @Patch('update-amount')
+  updateAmount(@Body() body: UpdateMaxAlbumAmountDto): Promise<GalleryDto> {
+    return this.galleryService.changeMaxAlbumsAmount(body);
   }
 
   @UseGuards(AccessTokenGuard)

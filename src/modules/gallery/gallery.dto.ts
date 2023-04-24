@@ -17,6 +17,8 @@ export class GalleryDto {
 
   name: string;
 
+  maxAmount: number;
+
   albums?: AlbumDto[];
   user?: UserDto;
 }
@@ -24,4 +26,9 @@ export class GalleryDto {
 export class UpdateGalleryBodyDto {
   galleryId: string;
   albumId: string;
+}
+
+export class UpdateMaxAlbumAmountDto {
+  galleryId: string;
+  maxAmount?: number;
 }

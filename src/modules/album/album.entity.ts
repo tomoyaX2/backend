@@ -38,7 +38,7 @@ export class Album {
   get rate(): number {
     const result =
       this.rates?.reduce((acc, curr) => acc + curr.rate, 0) /
-        this.rates?.length || 1;
+        this.rates?.length || 0;
 
     return result;
   }

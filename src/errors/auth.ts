@@ -58,4 +58,9 @@ export const Errors = {
   fileSizeExceed: {
     message: 'File size cannot be more than 5 Mb',
   },
+  gallery: {
+    maxAlbumsAmount: {
+      message: 'Max albums amount cannot be less than actual albums amount',
+    },
+  },
 };

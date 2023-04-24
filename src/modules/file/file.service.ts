@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-
+import { v4 } from 'uuid';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { S3 } from '@aws-sdk/client-s3';
 
@@ -27,7 +27,7 @@ export class FileService {
     imageData: Buffer;
     userId: string;
   }) {
-    const imageUrl = `users/${userId}/avatar.png`;
+    const imageUrl = `users/${userId}/avatar-${v4()}.png`;
     const bucketParams = {
       Bucket: 'scrapper-images-data',
       Key: imageUrl,
