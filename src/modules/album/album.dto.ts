@@ -23,7 +23,7 @@ export class PaginatedAlbumDto {
 export class AlbumDto {
   id?: string;
   title?: string;
-  gallery?: GalleryDto;
+  gallery?: GalleryDto[];
   images?: ImageDto[];
   authors?: AuthorDto[];
   series?: SeriesDto;

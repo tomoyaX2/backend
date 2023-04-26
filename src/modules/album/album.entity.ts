@@ -46,14 +46,19 @@ export class Album {
   @Column({ nullable: true })
   totalImages?: number;
 
-  @ManyToOne(() => Gallery, (gallery) => gallery.albums, {
-    onDelete: 'SET NULL',
+  @ManyToMany(() => Gallery, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @JoinTable({
+    name: 'album_gallery',
+    joinColumn: {
+      name: 'album_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'gallery_id',
+      referencedColumnName: 'id',
+    },
   })
-  @JoinColumn({
-    name: 'gallery_id',
-    referencedColumnName: 'id',
-  })
-  gallery?: Gallery;
+  gallery?: Gallery[];
 
   @Column({ nullable: true })
   path?: string;

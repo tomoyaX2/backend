@@ -13,9 +13,8 @@ import {
   UseInterceptors,
   Req,
   HttpCode,
-  Headers,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiConsumes, ApiQuery, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiQuery } from '@nestjs/swagger';
 import { AccessTokenGuard } from '../auth/auth.guard';
 import {
   PaginatedUsersDto,

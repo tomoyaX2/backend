@@ -3,8 +3,9 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
-  OneToMany,
+  JoinTable,
   JoinColumn,
+  ManyToMany,
 } from 'typeorm';
 import { Album } from '../album/album.entity';
 import { User } from '../users/users.entity';
@@ -19,7 +20,18 @@ export class Gallery {
   @Column({ nullable: true })
   maxAmount: number;
 
-  @OneToMany(() => Album, (album) => album.gallery)
+  @ManyToMany(() => Album, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @JoinTable({
+    name: 'gallery_album',
+    joinColumn: {
+      name: 'gallery_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'album_id',
+      referencedColumnName: 'id',
+    },
+  })
   albums?: Album[];
 
   @ManyToOne(() => User, (user) => user.galleries, { onDelete: 'NO ACTION' })

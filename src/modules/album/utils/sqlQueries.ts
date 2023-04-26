@@ -11,7 +11,6 @@ export const getDataWithRelations = (dataToSelect, orderBy) => {
     .join(', ');
   return (
     `SELECT "Album"."id" AS "Album_id", "Album"."title" AS "Album_title", "Album"."views" AS "Album_views",  "Album"."totalImages" AS "Album_totalImages", "Album"."path" AS "Album_path", "Album"."downloadPath" AS "Album_downloadPath", "Album"."preview" AS "Album_preview", "Album"."previewOrientation" AS "Album_previewOrientation", "Album"."created_date" AS "Album_created_date", "Album"."updated_date" AS "Album_updated_date",` +
-    `"Album"."gallery_id" AS "Album_gallery_id",` +
     `"Album"."type_id" AS "Album_type_id",` +
     `"Album"."series_id" AS "Album_series_id", ` +
     `"Album"."language_id" AS "Album_language_id", ` +

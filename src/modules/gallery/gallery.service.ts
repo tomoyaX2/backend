@@ -58,14 +58,17 @@ export class GalleryService {
       { id: galleryId },
       { relations: ['albums'] },
     );
-    if (gallery.maxAmount === null) {
+    if (!gallery.maxAmount) {
       gallery.maxAmount = 20;
     }
 
     const album = await this.albumService.getAlbumById(albumId);
-    if (gallery.maxAmount <= gallery.albums.length) gallery.albums.shift();
-    gallery.albums = [...gallery.albums, album];
 
+    if (gallery.maxAmount >= gallery.albums.length + 1) {
+      gallery.albums = [...gallery.albums, album];
+    } else {
+      gallery.albums[0] = album;
+    }
     this.galleryRepository.save(gallery);
   }
 
