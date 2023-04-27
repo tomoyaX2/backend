@@ -18,3 +18,8 @@ export class CommentBodyDto {
   text: string;
   albumId: string;
 }
+
+export class DeleteCommentDto {
+  albumId: string;
+  commentId: string;
+}

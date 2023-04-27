@@ -12,6 +12,6 @@ export class Comment {
   @ManyToOne(() => Album, (album) => album.comments)
   album: Album;
 
-  @ManyToOne(() => User, (album) => album.comments)
+  @ManyToOne(() => User, (user) => user.comments)
   author: User;
 }

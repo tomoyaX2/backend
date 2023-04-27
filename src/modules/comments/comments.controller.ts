@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Post,
   Query,
@@ -8,7 +9,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
-import { CommentBodyDto, PaginatedCommentDto } from './comments.dto';
+import {
+  CommentBodyDto,
+  DeleteCommentDto,
+  PaginatedCommentDto,
+} from './comments.dto';
 import { AccessTokenGuard } from '../auth/auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
@@ -35,5 +40,11 @@ export class CommentsController {
   @ApiBearerAuth()
   createComment(@Body() comment: CommentBodyDto, @Req() req): Promise<void> {
     return this.commentsService.saveComment(comment, req.sub);
+  }
+
+  @Delete()
+  @ApiBearerAuth()
+  deleteComment(@Body() comment: DeleteCommentDto, @Req() req): Promise<void> {
+    return this.commentsService.deleteComment({ ...comment, userId: req.sub });
   }
 }

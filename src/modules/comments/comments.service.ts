@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   CommentsPaginationQuery,
@@ -8,11 +8,13 @@ import { Repository } from 'typeorm';
 import {
   CommentBodyDto,
   CommentDto,
+  DeleteCommentDto,
   PaginatedCommentDto,
 } from './comments.dto';
 import { Comment } from './comments.entity';
 import { UsersService } from '../users/users.service';
 import { AlbumService } from '../album/album.service';
+import { Errors } from 'src/errors/auth';
 
 @Injectable()
 export class CommentsService {
@@ -28,13 +30,13 @@ export class CommentsService {
     perPage,
     albumId,
   }: CommentsPaginationQuery): Promise<PaginatedCommentDto> {
-    const [data, total] = await this.commentsRepository
-      .createQueryBuilder('comment')
-      .leftJoinAndSelect('comment.album', 'album')
-      .where('album.id LIKE :albumId', { albumId })
-      .take(perPage)
-      .skip(perPage * page - 1)
-      .execute();
+    const [data, total] = await this.commentsRepository.findAndCount({
+      take: perPage,
+      skip: (page - 1) * perPage,
+      relations: ['author'],
+      where: { album: { id: albumId } },
+    });
+    console.log(data, 'data');
     return { data, total, currentPage: page };
   }
 
@@ -43,9 +45,10 @@ export class CommentsService {
     authorId: string,
   ): Promise<void> {
     const album = await this.albumService.getAlbumById(albumId);
-    const user = await this.usersService.getUserById(authorId);
+    const user = await this.usersService.getUserById(authorId, ['comments']);
 
     const comment = await this.commentsRepository.save({ text, album, user });
+
     await this.albumService.updateAlbum({
       ...album,
       comments: [...(album.comments || []), comment],
@@ -55,4 +58,36 @@ export class CommentsService {
       comments: [...(user.comments || []), comment],
     });
   }
+
+  deleteComment = async ({
+    userId,
+    commentId,
+    albumId,
+  }: DeleteCommentDto & { userId: string }) => {
+    const comment = await this.commentsRepository.findOne({
+      where: { id: commentId },
+      relations: ['author', 'album'],
+    });
+    const currentUser = await this.usersService.getUserById(userId);
+    const isCurrentComment = comment.id === commentId;
+    const isBelongToUser = comment.author.id === userId;
+    const isBelongToAlbum = comment.album.id === albumId;
+    const isCurrentUserAdmin = !!currentUser.isAdmin;
+    if (!isCurrentComment) {
+      throw new BadRequestException(Errors.comments.incorrectCommentId);
+    }
+    if (!(isBelongToUser || isCurrentUserAdmin)) {
+      throw new BadRequestException(Errors.comments.incorrectUser);
+    }
+    if (!isBelongToAlbum) {
+      throw new BadRequestException(Errors.comments.incorrectAlbum);
+    }
+    if (
+      isCurrentComment &&
+      isBelongToAlbum &&
+      (isBelongToUser || isCurrentUserAdmin)
+    ) {
+      await this.commentsRepository.delete(comment);
+    }
+  };
 }

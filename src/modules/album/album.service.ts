@@ -57,6 +57,7 @@ export class AlbumService {
         'group',
         'tags',
         'comments',
+        'comments.author',
         'type',
         'rates',
       ],

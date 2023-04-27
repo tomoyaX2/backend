@@ -63,4 +63,15 @@ export const Errors = {
       message: 'Max albums amount cannot be less than actual albums amount',
     },
   },
+  comments: {
+    incorrectUser: {
+      message: 'You cannot delete this comment',
+    },
+    incorrectCommentId: {
+      message: "This comment id doesn't exist ",
+    },
+    incorrectAlbum: {
+      message: "This comment doesn't below to album",
+    },
+  },
 };

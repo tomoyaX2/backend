@@ -59,8 +59,7 @@ export class User {
   galleries: Gallery[];
 
   @OneToMany(() => Comment, (comment) => comment.author, {
-    onDelete: 'SET NULL',
-    onUpdate: 'SET NULL',
+    onDelete: 'CASCADE',
   })
   comments: Comment[];
 
