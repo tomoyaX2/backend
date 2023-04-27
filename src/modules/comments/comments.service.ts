@@ -1,9 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  CommentsPaginationQuery,
-  DefaultPaginationQuery,
-} from 'src/shared/types';
+import { CommentsPaginationQuery } from 'src/shared/types';
 import { Repository } from 'typeorm';
 import {
   CommentBodyDto,
@@ -20,7 +17,9 @@ import { Errors } from 'src/errors/auth';
 export class CommentsService {
   constructor(
     @InjectRepository(Comment)
-    private commentsRepository: Repository<CommentDto>,
+    private commentsRepository: Repository<
+      CommentDto & { updated_date: string }
+    >,
     private readonly usersService: UsersService,
     private readonly albumService: AlbumService,
   ) {}
@@ -33,10 +32,10 @@ export class CommentsService {
     const [data, total] = await this.commentsRepository.findAndCount({
       take: perPage,
       skip: (page - 1) * perPage,
+      order: { updated_date: 'DESC' },
       relations: ['author'],
       where: { album: { id: albumId } },
     });
-    console.log(data, 'data');
     return { data, total, currentPage: page };
   }
 
@@ -44,19 +43,11 @@ export class CommentsService {
     { text, albumId }: CommentBodyDto,
     authorId: string,
   ): Promise<void> {
-    const album = await this.albumService.getAlbumById(albumId);
-    const user = await this.usersService.getUserById(authorId, ['comments']);
-
-    const comment = await this.commentsRepository.save({ text, album, user });
-
-    await this.albumService.updateAlbum({
-      ...album,
-      comments: [...(album.comments || []), comment],
-    });
-    await this.usersService.saveUser({
-      ...user,
-      comments: [...(user.comments || []), comment],
-    });
+    const album = await this.albumService.getAlbumById(albumId, false, [
+      'comments',
+    ]);
+    const author = await this.usersService.getUserById(authorId, ['comments']);
+    await this.commentsRepository.save({ text, album, author });
   }
 
   deleteComment = async ({
@@ -87,7 +78,7 @@ export class CommentsService {
       isBelongToAlbum &&
       (isBelongToUser || isCurrentUserAdmin)
     ) {
-      await this.commentsRepository.delete(comment);
+      await this.commentsRepository.delete(comment.id);
     }
   };
 }

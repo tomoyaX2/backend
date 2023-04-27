@@ -1,14 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HitomiFields } from 'src/shared/enums/HitomiFields';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { AuthorService } from '../authors/authors.service';
 import { GroupService } from '../group/group.service';
 import { ImageService } from '../image/image.service';
 import { LanguagesService } from '../languages/languages.service';
 import { SeriesService } from '../series/series.service';
 import { TagsService } from '../tags/tags.service';
-import { AlbumDto, PaginatedAlbumDto } from './album.dto';
+import { AlbumDto, PaginatedAlbumDto, RecommendationsDto } from './album.dto';
 import { Album } from './album.entity';
 import { TypeService } from '../type/type.service';
 import { LogService } from '../log/log.service';
@@ -18,6 +18,8 @@ import * as _ from 'lodash';
 import { BlockedAlbumService } from '../blocked/blocked.service';
 import { UsersService } from '../users/users.service';
 import { RateService } from '../rate/rate.service';
+import { albumRelations } from 'src/shared/constants';
+import { appendRate } from './utils/appendRate';
 
 @Injectable()
 export class AlbumService {
@@ -48,19 +50,13 @@ export class AlbumService {
     return { data, total, currentPage: page };
   }
 
-  async getAlbumById(id: string, ignoreViews = false): Promise<AlbumDto> {
+  async getAlbumById(
+    id: string,
+    ignoreViews = false,
+    relations: string[] = albumRelations,
+  ): Promise<AlbumDto> {
     const album = await this.albumRepository.findOne({
-      relations: [
-        'authors',
-        'series',
-        'language',
-        'group',
-        'tags',
-        'comments',
-        'comments.author',
-        'type',
-        'rates',
-      ],
+      relations,
       where: { id },
     });
     if (!album) {
@@ -97,9 +93,7 @@ export class AlbumService {
     return !!album;
   }
 
-  async searchAlbums(
-    albumParams: AlbumPaginationQuery,
-  ): Promise<PaginatedAlbumDto> {
+  async searchAlbums(albumParams: AlbumPaginationQuery): Promise<any> {
     const [data, total] = await buildStrictPagination(
       albumParams,
       this.albumRepository,
@@ -109,7 +103,12 @@ export class AlbumService {
       this.languageService,
       this.groupService,
     );
-    return { data: data ?? [], total, currentPage: albumParams.page } as any;
+    //TODO: make with sql query
+    return {
+      data: appendRate(data as AlbumDto[]) ?? [],
+      total,
+      currentPage: albumParams.page,
+    } as any;
   }
 
   async createAlbum(album: AlbumDto): Promise<AlbumDto> {
@@ -234,5 +233,37 @@ export class AlbumService {
     );
     const user = await this.usersService.getUserById(userId, ['rates']);
     await this.rateService.saveRate({ album, user, rate });
+  };
+
+  getAlbumRecomendations = async ({
+    albumId,
+  }: {
+    albumId: string;
+  }): Promise<RecommendationsDto> => {
+    const currentAlbum = await this.albumRepository.findOne(albumId, {
+      relations: ['authors', 'series'],
+    });
+    const sameAuthor = await this.albumRepository
+      .createQueryBuilder('album')
+      .leftJoin('album.authors', 'author')
+      .leftJoin('album.rates', 'rate')
+      .where('author.id IN (:...authorIds)', {
+        authorIds: currentAlbum.authors.map((el) => el.id),
+      })
+      .take(10)
+      .getMany();
+    const sameSeries = await this.albumRepository
+      .createQueryBuilder('album')
+      .leftJoin('album.series', 'series')
+      .leftJoin('album.rates', 'rate')
+      .where('series.id IN (:...seriesIds)', {
+        seriesIds: currentAlbum.series,
+      })
+      .take(10)
+      .getMany();
+    return {
+      sameAuthor: appendRate(sameAuthor),
+      sameSeries: appendRate(sameSeries),
+    };
   };
 }

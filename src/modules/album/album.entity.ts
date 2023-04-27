@@ -32,7 +32,10 @@ export class Album {
   @Column({ nullable: true })
   views?: number;
 
-  @OneToMany(() => Rate, (rate) => rate.album)
+  @OneToMany(() => Rate, (rate) => rate.album, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   rates: Rate[];
 
   get rate(): number {
@@ -46,7 +49,7 @@ export class Album {
   @Column({ nullable: true })
   totalImages?: number;
 
-  @ManyToMany(() => Gallery, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @ManyToMany(() => Gallery, { onDelete: 'CASCADE' })
   @JoinTable({
     name: 'album_gallery',
     joinColumn: {
@@ -66,7 +69,9 @@ export class Album {
   @Column({ nullable: true })
   downloadPath?: string;
 
-  @OneToMany(() => Image, (image) => image.album)
+  @OneToMany(() => Image, (image) => image.album, {
+    onDelete: 'CASCADE',
+  })
   images?: Image[];
 
   @Column({ nullable: true })
@@ -77,11 +82,10 @@ export class Album {
 
   @OneToMany(() => Comment, (comment) => comment.album, {
     onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
   })
   comments?: Comment[];
 
-  @ManyToMany(() => Author, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @ManyToMany(() => Author, { onDelete: 'CASCADE' })
   @JoinTable({
     name: 'album_authors',
     joinColumn: {

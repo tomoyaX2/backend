@@ -25,6 +25,7 @@ export class Image {
 
   @ManyToOne(() => Album, (album) => album.images, {
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   @JoinColumn({ name: 'album_id', referencedColumnName: 'id' })
   album?: Album;

@@ -2,7 +2,6 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  JoinTable,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
@@ -16,7 +15,10 @@ export class Rate {
   @Column()
   rate: number;
 
-  @ManyToOne(() => Album, (album) => album.rates)
+  @ManyToOne(() => Album, (album) => album.rates, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn()
   album: Album;
 

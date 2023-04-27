@@ -3,27 +3,22 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Post,
   Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
-import {
-  CommentBodyDto,
-  DeleteCommentDto,
-  PaginatedCommentDto,
-} from './comments.dto';
+import { CommentBodyDto, PaginatedCommentDto } from './comments.dto';
 import { AccessTokenGuard } from '../auth/auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('comments')
-@UseGuards(AccessTokenGuard)
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
   @Get()
-  @ApiBearerAuth()
   getComments(
     @Query('page') page: string,
     @Query('perPage') perPage: string,
@@ -38,13 +33,23 @@ export class CommentsController {
 
   @Post()
   @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
   createComment(@Body() comment: CommentBodyDto, @Req() req): Promise<void> {
     return this.commentsService.saveComment(comment, req.sub);
   }
 
-  @Delete()
+  @Delete(':commentId/:albumId')
   @ApiBearerAuth()
-  deleteComment(@Body() comment: DeleteCommentDto, @Req() req): Promise<void> {
-    return this.commentsService.deleteComment({ ...comment, userId: req.sub });
+  @UseGuards(AccessTokenGuard)
+  deleteComment(
+    @Param('albumId') albumId: string,
+    @Param('commentId') commentId: string,
+    @Req() req,
+  ): Promise<void> {
+    return this.commentsService.deleteComment({
+      albumId,
+      commentId,
+      userId: req.sub,
+    });
   }
 }

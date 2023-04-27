@@ -36,12 +36,21 @@ const normalizeAlbum = (item: NonUnifiedAlbum): AlbumDto => {
         albumsCount: item.Album__tags_albumsCount,
       },
     ],
+    rates: !item.Album__rates_id
+      ? []
+      : [
+          {
+            id: item.Album__rates_id,
+            rate: item.Album__rates_rate,
+          },
+        ],
     // comments
   };
 };
 
 const unifySearchData = (searchData: NonUnifiedAlbum[]): AlbumDto[] => {
   const result = new Map<string, AlbumDto>();
+  console.log(searchData, 'data');
   for (const item of searchData) {
     const hasItem = result.has(item.Album_id);
     if (!hasItem) {
@@ -53,6 +62,9 @@ const unifySearchData = (searchData: NonUnifiedAlbum[]): AlbumDto[] => {
       );
       const hasCurrentAuthor = target.authors.some(
         (el) => el.id === item.Album__authors_id,
+      );
+      const hasCurrentRate = target.rates.some(
+        (el) => el.id === item.Album__rates_id,
       );
       if (!hasCurrentTag) {
         const newTag = {
@@ -73,6 +85,16 @@ const unifySearchData = (searchData: NonUnifiedAlbum[]): AlbumDto[] => {
         result.set(item.Album_id, {
           ...target,
           authors: [...target.authors, newAuthor],
+        });
+      }
+      if (!hasCurrentRate) {
+        const newRate = {
+          id: item.Album__rates_id,
+          rate: item.Album__rates_rate || 0,
+        };
+        result.set(item.Album_id, {
+          ...target,
+          rates: !newRate?.id ? target.rates : [...target.rates, newRate],
         });
       }
     }

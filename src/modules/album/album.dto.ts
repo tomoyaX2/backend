@@ -40,6 +40,7 @@ export class AlbumDto {
   downloadPath?: string;
   totalImages?: number;
   rates?: RateDto[];
+  created_date?: Date;
 }
 
 export class SearchDto {
@@ -56,5 +57,11 @@ export class SearchDto {
 }
 
 export class RateDto {
+  id?: string;
   rate: number;
+}
+
+export class RecommendationsDto {
+  sameAuthor?: AlbumDto[];
+  sameSeries?: AlbumDto[];
 }

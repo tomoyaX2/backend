@@ -13,7 +13,13 @@ import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { HitomiFields } from 'src/shared/enums/HitomiFields';
 import { DeleteResult } from 'typeorm';
 import { AccessTokenGuard } from '../auth/auth.guard';
-import { AlbumDto, PaginatedAlbumDto, RateDto, SearchDto } from './album.dto';
+import {
+  AlbumDto,
+  PaginatedAlbumDto,
+  RateDto,
+  RecommendationsDto,
+  SearchDto,
+} from './album.dto';
 import { AlbumService } from './album.service';
 
 @Controller('albums')
@@ -130,6 +136,15 @@ export class AlbumController {
       albumId,
       userId: req.sub,
       rate: body.rate,
+    });
+  }
+
+  @Get(':albumId/recommendations')
+  getAlbumRecommendations(
+    @Param('albumId') albumId: string,
+  ): Promise<RecommendationsDto> {
+    return this.albumService.getAlbumRecomendations({
+      albumId,
     });
   }
 }
