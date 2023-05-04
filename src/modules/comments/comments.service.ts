@@ -43,7 +43,7 @@ export class CommentsService {
     { text, albumId }: CommentBodyDto,
     authorId: string,
   ): Promise<void> {
-    const album = await this.albumService.getAlbumById(albumId, false, [
+    const album = await this.albumService.getAlbumById(albumId, true, [
       'comments',
     ]);
     const author = await this.usersService.getUserById(authorId, ['comments']);

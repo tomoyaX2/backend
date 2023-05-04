@@ -17,10 +17,10 @@ const normalizeAlbum = (item: NonUnifiedAlbum): AlbumDto => {
   return {
     id: item.Album_id,
     title: item.Album_title,
-    authors: [{ id: item.Album__authors_id, name: item.Album__authors_name }],
-    series: { id: item.Album__series_id, name: item.Album__series_name },
+    // authors: [{ id: item.Album__authors_id, name: item.Album__authors_name }],
+    // series: { id: item.Album__series_id, name: item.Album__series_name },
     language: { id: item.Album__language_id, name: item.Album__language_name },
-    group: { id: item.Album__group_id, name: item.Album__group_name },
+    // group: { id: item.Album__group_id, name: item.Album__group_name },
     type: { id: item.Album__type_id, name: item.Album__type_name },
     previewOrientation: item.Album_previewOrientation,
     path: item.Album_path,
@@ -50,7 +50,7 @@ const normalizeAlbum = (item: NonUnifiedAlbum): AlbumDto => {
 
 const unifySearchData = (searchData: NonUnifiedAlbum[]): AlbumDto[] => {
   const result = new Map<string, AlbumDto>();
-  console.log(searchData, 'data');
+
   for (const item of searchData) {
     const hasItem = result.has(item.Album_id);
     if (!hasItem) {
@@ -60,9 +60,9 @@ const unifySearchData = (searchData: NonUnifiedAlbum[]): AlbumDto[] => {
       const hasCurrentTag = target.tags.some(
         (el) => el.id === item.Album__tags_id,
       );
-      const hasCurrentAuthor = target.authors.some(
-        (el) => el.id === item.Album__authors_id,
-      );
+      // const hasCurrentAuthor = target.authors.some(
+      //   (el) => el.id === item.Album__authors_id,
+      // );
       const hasCurrentRate = target.rates.some(
         (el) => el.id === item.Album__rates_id,
       );
@@ -77,16 +77,16 @@ const unifySearchData = (searchData: NonUnifiedAlbum[]): AlbumDto[] => {
           tags: [...target.tags, newTag],
         });
       }
-      if (!hasCurrentAuthor) {
-        const newAuthor = {
-          id: item.Album__authors_id,
-          name: item.Album__authors_name,
-        };
-        result.set(item.Album_id, {
-          ...target,
-          authors: [...target.authors, newAuthor],
-        });
-      }
+      // if (!hasCurrentAuthor) {
+      //   const newAuthor = {
+      //     id: item.Album__authors_id,
+      //     name: item.Album__authors_name,
+      //   };
+      //   result.set(item.Album_id, {
+      //     ...target,
+      //     authors: [...target.authors, newAuthor],
+      //   });
+      // }
       if (!hasCurrentRate) {
         const newRate = {
           id: item.Album__rates_id,
@@ -113,7 +113,7 @@ export const buildStrictPagination = async (
 ) => {
   const albumIdsSet = new Set<string>();
   const albumIdsToAvoidSet = new Set<string>();
-  const exceptionTagIds = ['3d0a1bd6-f9b1-439a-91ac-24529e6655ae'];
+  const exceptionTagIds = ['326ae7fa-fd24-4014-9a59-1836f69086ae'];
   const albumToAvoidList = await getManager().query(
     getQueryWithFilteredExceptions(),
     exceptionTagIds,

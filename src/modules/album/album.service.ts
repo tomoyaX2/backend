@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HitomiFields } from 'src/shared/enums/HitomiFields';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { AuthorService } from '../authors/authors.service';
 import { GroupService } from '../group/group.service';
 import { ImageService } from '../image/image.service';
@@ -211,7 +211,13 @@ export class AlbumService {
   }
 
   deleteAlbumById = async (id: string) => {
-    const album = await this.albumRepository.findOne({ id });
+    const album = await this.albumRepository.findOne(
+      { id },
+      { relations: ['tags'] },
+    );
+    for (const tag of album.tags) {
+      await this.tagsService.onRemoveAlbum({ tagId: tag.id });
+    }
     await this.blockedAlbumService.blockAlbum({ name: album.title });
     return this.albumRepository.delete(id);
   };
@@ -241,29 +247,84 @@ export class AlbumService {
     albumId: string;
   }): Promise<RecommendationsDto> => {
     const currentAlbum = await this.albumRepository.findOne(albumId, {
-      relations: ['authors', 'series'],
+      relations: ['authors', 'series', 'group', 'language'],
     });
-    const sameAuthor = await this.albumRepository
-      .createQueryBuilder('album')
-      .leftJoin('album.authors', 'author')
-      .leftJoin('album.rates', 'rate')
-      .where('author.id IN (:...authorIds)', {
-        authorIds: currentAlbum.authors.map((el) => el.id),
-      })
-      .take(10)
-      .getMany();
-    const sameSeries = await this.albumRepository
-      .createQueryBuilder('album')
-      .leftJoin('album.series', 'series')
-      .leftJoin('album.rates', 'rate')
-      .where('series.id IN (:...seriesIds)', {
-        seriesIds: currentAlbum.series,
-      })
-      .take(10)
-      .getMany();
+    let sameAuthor,
+      sameSeries,
+      sameGroups = [];
+
+    if (!!currentAlbum.authors.length) {
+      sameAuthor = await this.albumRepository
+        .createQueryBuilder('album')
+        .leftJoinAndSelect('album.authors', 'author')
+        .leftJoinAndSelect('album.rates', 'rate')
+        .leftJoinAndSelect('album.type', 'type')
+        .leftJoinAndSelect('album.language', 'language')
+        .where('author.id IN (:...authorIds)', {
+          authorIds: currentAlbum.authors.map((el) => el.id),
+        })
+        .andWhere('language.id = :languageId', {
+          languageId: currentAlbum.language?.id,
+        })
+        .andWhere('album.id != :currentAlbumId', { currentAlbumId: albumId })
+        .orderBy('album.views', 'DESC')
+        .take(10)
+        .getMany();
+    }
+    if (!!currentAlbum.series?.id) {
+      sameSeries = await this.albumRepository
+        .createQueryBuilder('album')
+        .leftJoinAndSelect('album.series', 'series')
+        .leftJoinAndSelect('album.type', 'type')
+        .leftJoinAndSelect('album.rates', 'rate')
+        .leftJoinAndSelect('album.language', 'language')
+        .where('series.id = :seriesId', {
+          seriesId: currentAlbum.series.id,
+        })
+        .andWhere('series.id NOT IN (:...bannedIds)', {
+          bannedIds: ['0df933bf-be08-4e7c-b624-c6e0794a7a4b'],
+        })
+        .andWhere('language.id = :languageId', {
+          languageId: currentAlbum.language?.id,
+        })
+        .andWhere('album.id NOT IN (:...alreadySelectedIds)', {
+          alreadySelectedIds: [
+            ...(sameAuthor?.map((el) => el.id) ?? []),
+            albumId,
+          ],
+        })
+        .orderBy('album.views', 'DESC')
+        .take(10)
+        .getMany();
+    }
+    if (!!currentAlbum.group?.id) {
+      sameGroups = await this.albumRepository
+        .createQueryBuilder('album')
+        .leftJoinAndSelect('album.group', 'group')
+        .leftJoinAndSelect('album.rates', 'rate')
+        .leftJoinAndSelect('album.type', 'type')
+        .leftJoinAndSelect('album.language', 'language')
+        .where('group.id = :groupId', {
+          groupId: currentAlbum.group.id,
+        })
+        .andWhere('language.id = :languageId', {
+          languageId: currentAlbum.language?.id,
+        })
+        .andWhere('album.id NOT IN (:...alreadySelectedIds)', {
+          alreadySelectedIds: [
+            ...(sameSeries?.map((el) => el.id) ?? []),
+            ...(sameAuthor?.map((el) => el.id) ?? []),
+            albumId,
+          ],
+        })
+        .orderBy('album.views', 'DESC')
+        .take(10)
+        .getMany();
+    }
     return {
       sameAuthor: appendRate(sameAuthor),
       sameSeries: appendRate(sameSeries),
+      sameGroups: appendRate(sameGroups),
     };
   };
 }

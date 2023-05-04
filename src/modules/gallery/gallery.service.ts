@@ -62,7 +62,7 @@ export class GalleryService {
       gallery.maxAmount = 20;
     }
 
-    const album = await this.albumService.getAlbumById(albumId);
+    const album = await this.albumService.getAlbumById(albumId, true);
 
     if (gallery.maxAmount >= gallery.albums.length + 1) {
       gallery.albums = [...gallery.albums, album];

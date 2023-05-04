@@ -34,7 +34,6 @@ export class Album {
 
   @OneToMany(() => Rate, (rate) => rate.album, {
     onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
   })
   rates: Rate[];
 
@@ -115,7 +114,7 @@ export class Album {
   @JoinColumn({ name: 'group_id', referencedColumnName: 'id' })
   group?: Group;
 
-  @ManyToMany(() => Tag, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @ManyToMany(() => Tag, { onDelete: 'CASCADE' })
   @JoinTable({
     name: 'album_tags',
     joinColumn: {

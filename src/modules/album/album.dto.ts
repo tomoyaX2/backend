@@ -64,4 +64,5 @@ export class RateDto {
 export class RecommendationsDto {
   sameAuthor?: AlbumDto[];
   sameSeries?: AlbumDto[];
+  sameGroups?: AlbumDto[];
 }

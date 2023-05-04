@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { albumRelations } from 'src/shared/constants';
 import { DefaultPaginationQuery } from 'src/shared/types';
 import { In, Like, Repository } from 'typeorm';
 import { Album } from '../album/album.entity';
@@ -24,7 +23,7 @@ export class SeriesService {
   }: DefaultPaginationQuery): Promise<PaginatedSeriesDto> {
     const [data, total] = await this.seriesRepository.findAndCount({
       where: name ? { name: Like('%' + name + '%') } : {},
-      relations: withAlbums ? albumRelations : [],
+      relations: withAlbums ? ['albums'] : [],
       take: perPage,
       skip: (page - 1) * perPage,
       order: { name: 'ASC' },

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { albumRelations } from 'src/shared/constants';
 import { DefaultPaginationQuery } from 'src/shared/types';
 import { In, Like, Repository } from 'typeorm';
 import { AlbumDto } from '../album/album.dto';
@@ -24,7 +23,7 @@ export class TagsService {
   }: DefaultPaginationQuery): Promise<PaginatedTagsDto> {
     const [data, total] = await this.tagsRepository.findAndCount({
       where: name ? { name: Like('%' + name + '%') } : {},
-      relations: withAlbums ? albumRelations : [],
+      relations: withAlbums ? ['albums'] : [],
       take: perPage,
       skip: (page - 1) * perPage,
       order: { name: 'ASC' },
@@ -118,5 +117,11 @@ export class TagsService {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  onRemoveAlbum = async ({ tagId }: { tagId: string }) => {
+    const tag = await this.tagsRepository.findOne(tagId);
+    tag.albumsCount -= 1;
+    await this.tagsRepository.save(tag);
   };
 }
