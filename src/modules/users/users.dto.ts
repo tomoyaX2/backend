@@ -1,5 +1,5 @@
-import { RateDto } from '../album/album.dto';
-import { CommentDto } from '../comments/comments.dto';
+import { CommentDto } from '../manga/comments/comments.dto';
+import { RateDto } from '../manga/rate/rate.dto';
 
 export class PaginatedUsersDto {
   data: UserDto[];

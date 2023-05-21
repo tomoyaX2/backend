@@ -1,15 +1,8 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  JoinTable,
-  ManyToMany,
-} from 'typeorm';
-import { Comment } from '../comments/comments.entity';
-import { Gallery } from '../gallery/gallery.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Gallery } from '../manga/gallery/gallery.entity';
 import { Exclude } from 'class-transformer';
-import { Rate } from '../rate/rate.entity';
+import { Rate } from '../manga/rate/rate.entity';
+import { Comment } from '../manga/comments/comments.entity';
 
 @Entity()
 export class User {

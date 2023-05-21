@@ -9,7 +9,7 @@ import { FindOperator, Like, Repository } from 'typeorm';
 import { ChangeUserDataDto, PaginatedUsersDto, UserDto } from './users.dto';
 import { User } from './users.entity';
 import { FileService } from '../file/file.service';
-import { RateDto } from '../album/album.dto';
+import { RateDto } from '../manga/rate/rate.dto';
 
 @Injectable()
 export class UsersService {

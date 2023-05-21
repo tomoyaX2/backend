@@ -1,19 +1,18 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { Album } from 'src/modules/album/album.entity';
-import { Author } from 'src/modules/authors/authors.entity';
-import { Comment } from 'src/modules/comments/comments.entity';
-import { Gallery } from 'src/modules/gallery/gallery.entity';
-import { Group } from 'src/modules/group/group.entity';
-import { Image } from 'src/modules/image/image.entity';
-import { Language } from 'src/modules/languages/languages.entity';
-import { Series } from 'src/modules/series/series.entity';
-import { Tag } from 'src/modules/tags/tags.entity';
-import { Type } from 'src/modules/type/type.entity';
+import { Gallery } from 'src/modules/manga/gallery/gallery.entity';
 import { User } from 'src/modules/users/users.entity';
 import * as fs from 'fs';
-import { BlockedAlbum } from 'src/modules/blocked/blocked.entity';
-import { Rate } from 'src/modules/rate/rate.entity';
-
+import { Album } from 'src/modules/manga/album/album.entity';
+import { Author } from 'src/modules/manga/authors/authors.entity';
+import { BlockedAlbum } from 'src/modules/manga/blocked/blocked.entity';
+import { Group } from 'src/modules/manga/group/group.entity';
+import { Language } from 'src/modules/manga/languages/languages.entity';
+import { Rate } from 'src/modules/manga/rate/rate.entity';
+import { Series } from 'src/modules/manga/series/series.entity';
+import { Tag } from 'src/modules/manga/tags/tags.entity';
+import { Type } from 'src/modules/manga/type/type.entity';
+import { Image } from 'src/modules/manga/image/image.entity';
+import { Comment } from 'src/modules/manga/comments/comments.entity';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 
@@ -71,7 +70,6 @@ class ConfigService {
       ssl: {
         ca: process.env.SSL_CERT || fs.readFileSync('ca-certificate.crt'),
       },
-      // dropSchema: true,
       synchronize: true,
     };
   }

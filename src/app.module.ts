@@ -3,24 +3,24 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { configService } from './config/config.service';
-import { ImageModule } from './modules/image/image.module';
-import { TagsModule } from './modules/tags/tags.module';
-import { AlbumModule } from './modules/album/album.module';
-import { AuthorsModule } from './modules/authors/authors.module';
-import { LanguagesModule } from './modules/languages/languages.module';
-import { SeriesModule } from './modules/series/series.module';
 import { UsersModule } from './modules/users/users.module';
-import { TypeModule } from './modules/type/type.module';
-import { GroupModule } from './modules/group/group.module';
 import { LogModule } from './modules/log/log.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { CommentsModule } from './modules/comments/comments.module';
 import { MailModule } from './modules/mail/mail.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
-import { BlockedAlbumModule } from './modules/blocked/blocked.module';
-import { GalleryModule } from './modules/gallery/gallery.module';
-import { RateModule } from './modules/rate/rade.module';
+import { GalleryModule } from './modules/manga/gallery/gallery.module';
+import { AlbumModule } from './modules/manga/album/album.module';
+import { AuthorsModule } from './modules/manga/authors/authors.module';
+import { BlockedAlbumModule } from './modules/manga/blocked/blocked.module';
+import { CommentsModule } from './modules/manga/comments/comments.module';
+import { GroupModule } from './modules/manga/group/group.module';
+import { ImageModule } from './modules/manga/image/image.module';
+import { LanguagesModule } from './modules/manga/languages/languages.module';
+import { RateModule } from './modules/manga/rate/rade.module';
+import { SeriesModule } from './modules/manga/series/series.module';
+import { TagsModule } from './modules/manga/tags/tags.module';
+import { TypeModule } from './modules/manga/type/type.module';
 
 @Module({
   imports: [

@@ -1,4 +1,4 @@
-import { Sort } from 'src/modules/album/album.dto';
+import { Sort } from 'src/modules/manga/album/album.dto';
 import { AlbumFilters } from './enums/AlbumFilters';
 
 export enum SelectorTypes {
