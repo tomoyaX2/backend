@@ -17,11 +17,13 @@ export interface DefaultPaginationQuery {
   page?: number;
   perPage?: number;
   withAlbums?: boolean;
+  withVideos?: boolean;
   [AlbumFilters.Name]?: string;
 }
 
 export interface CommentsPaginationQuery extends DefaultPaginationQuery {
-  albumId: string;
+  albumId?: string;
+  videoId?: string;
 }
 
 export interface AlbumPaginationQuery extends DefaultPaginationQuery {

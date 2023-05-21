@@ -13,6 +13,8 @@ import { Tag } from 'src/modules/manga/tags/tags.entity';
 import { Type } from 'src/modules/manga/type/type.entity';
 import { Image } from 'src/modules/manga/image/image.entity';
 import { Comment } from 'src/modules/manga/comments/comments.entity';
+import { AlbumEntities } from 'src/modules/manga';
+import { VideoEntities } from 'src/modules/video';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 
@@ -52,21 +54,7 @@ class ConfigService {
       password: this.getValue('POSTGRES_PASSWORD'),
       database: this.getValue('POSTGRES_DATABASE'),
       // logging: true,
-      entities: [
-        User,
-        Gallery,
-        Series,
-        Author,
-        Image,
-        Album,
-        Language,
-        Tag,
-        Type,
-        Group,
-        Comment,
-        BlockedAlbum,
-        Rate,
-      ],
+      entities: [...AlbumEntities, ...VideoEntities, User],
       ssl: {
         ca: process.env.SSL_CERT || fs.readFileSync('ca-certificate.crt'),
       },

@@ -26,7 +26,7 @@ export class TagsService {
       relations: withAlbums ? ['albums'] : [],
       take: perPage,
       skip: (page - 1) * perPage,
-      order: { name: 'ASC' },
+      order: { albumsCount: 'DESC' },
     });
 
     return { data, total, currentPage: page };

@@ -10,3 +10,12 @@ export const albumRelations = [
   'rates',
   // 'images',
 ];
+
+export const videoRelations = [
+  'language',
+  'tags',
+  'episodes',
+  'comments',
+  'type',
+  'episodes.qualities',
+];

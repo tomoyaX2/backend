@@ -73,5 +73,8 @@ export const Errors = {
     incorrectAlbum: {
       message: "This comment doesn't below to album",
     },
+    incorrectVideo: {
+      message: "This comment doesn't below to video",
+    },
   },
 };
