@@ -25,25 +25,23 @@ export class EpisodeService {
     });
   };
 
-  async createEpisode(
-    episode: EpisodeDto,
-    video?: VideoDto,
-  ): Promise<EpisodeDto> {
+  async createEpisode(episode: EpisodeDto): Promise<EpisodeDto> {
     try {
       const item = await this.episodeService.save({
         url: episode.url,
         name: episode.name,
       });
       const qualitiesToAssign = [];
-      for (const availableQuality of episode.availableQuality) {
-        const quality = await this.qualityService.saveQuality({
-          name: availableQuality,
-          episode: item,
-        });
-        qualitiesToAssign.push(quality);
-        if (video) episode.video = video;
+      if (episode.availableQuality?.length) {
+        for (const availableQuality of episode.availableQuality) {
+          const quality = await this.qualityService.saveQuality({
+            name: availableQuality,
+            episode: item,
+          });
+          qualitiesToAssign.push(quality);
+        }
       }
-      episode.qualities = qualitiesToAssign;
+      if (qualitiesToAssign.length) episode.qualities = qualitiesToAssign;
       await this.episodeService.save(episode);
       const result = await this.episodeService.findOne({ id: episode.id });
       return result;

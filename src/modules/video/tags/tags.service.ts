@@ -28,9 +28,6 @@ export class TagsService {
       skip: (page - 1) * perPage,
       order: { name: 'ASC' },
     });
-    // for (const tag of data) {
-    //   await this.tagsRepository.remove(tag);
-    // }
     return { data, total, currentPage: page };
   }
 

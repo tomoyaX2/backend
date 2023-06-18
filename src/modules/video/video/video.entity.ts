@@ -9,6 +9,7 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  Timestamp,
 } from 'typeorm';
 import { Comment } from '../comments/comments.entity';
 import { Language } from '../languages/languages.entity';
@@ -16,6 +17,7 @@ import { Tag } from '../tags/tags.entity';
 import { Type } from '../type/type.entity';
 import { Rate } from '../rate/rate.entity';
 import { Episode } from '../episode/eposide.entity';
+import { Studio } from '../studio/studio.entity';
 
 @Entity()
 export class Video {
@@ -26,13 +28,16 @@ export class Video {
   title?: string;
 
   @Column({ nullable: true })
+  originalTitle?: string;
+
+  @Column({ nullable: true })
   views?: number;
 
   @Column({ nullable: true })
   description?: string;
 
   @Column({ nullable: true })
-  releaseDate?: string;
+  releaseDate?: Date;
 
   @OneToMany(() => Rate, (rate) => rate.video, {
     onDelete: 'CASCADE',
@@ -67,6 +72,20 @@ export class Video {
   @ManyToOne(() => Language, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'language_id', referencedColumnName: 'id' })
   language?: Language;
+
+  @ManyToMany(() => Studio, { onDelete: 'CASCADE' })
+  @JoinTable({
+    name: 'video_studio',
+    joinColumn: {
+      name: 'video_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'studio_id',
+      referencedColumnName: 'id',
+    },
+  })
+  studios?: Studio[];
 
   @ManyToMany(() => Tag, { onDelete: 'CASCADE' })
   @JoinTable({

@@ -20,6 +20,9 @@ export class Episode {
   @Column()
   url: string;
 
+  @Column({ nullable: true })
+  coverUrl?: string;
+
   @ManyToOne(() => Video, (video) => video.episodes, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',

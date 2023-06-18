@@ -16,7 +16,7 @@ export class Rate {
   rate: number;
 
   @ManyToOne(() => Video, (video) => video.rates, {
-    onDelete: 'NO ACTION',
+    onDelete: 'CASCADE',
     onUpdate: 'NO ACTION',
   })
   @JoinColumn()

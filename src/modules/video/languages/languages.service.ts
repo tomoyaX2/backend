@@ -24,7 +24,7 @@ export class LanguagesService {
   }: DefaultPaginationQuery): Promise<PaginatedLanguageDto> {
     const [data, total] = await this.languagesRepository.findAndCount({
       where: name ? { name: Like('%' + name + '%') } : {},
-      relations: withVideos ? videoRelations : [],
+      relations: withVideos ? ['videos'] : [],
       take: perPage,
       skip: (page - 1) * perPage,
       order: { name: 'ASC' },

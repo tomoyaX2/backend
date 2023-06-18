@@ -21,6 +21,8 @@ import {
 import { BlockedVideoService } from '../blocked/blocked.service';
 import { EpisodeService } from '../episode/episodes.service';
 import { appendRate } from 'src/modules/manga/album/utils/appendRate';
+import { StudioService } from '../studio/studio.service';
+import * as moment from 'moment';
 
 @Injectable()
 export class VideoService {
@@ -31,6 +33,7 @@ export class VideoService {
     private tagsService: TagsService,
     private typeService: TypeService,
     private logService: LogService,
+    private studioService: StudioService,
     private episodeService: EpisodeService,
     private usersService: UsersService,
     private rateService: RateService,
@@ -76,11 +79,17 @@ export class VideoService {
     body: SearchDto,
     relations: string[] = videoRelations,
   ): Promise<PaginatedVideoDto> {
-    const [data, total] = await this.videoRepository.findAndCount({
+    const searchObject = {
       relations,
-      where: { title: body.title },
+      take: body.perPage,
+      skip: (body.page - 1) * body.perPage,
       order: { created_date: 'DESC' },
-    });
+    } as any;
+    if (body.title) {
+      searchObject.where = { title: body.title };
+    }
+    const [data, total] = await this.videoRepository.findAndCount(searchObject);
+
     return {
       data: appendRate(data as VideoDto[]) ?? [],
       total,
@@ -114,8 +123,44 @@ export class VideoService {
   }
 
   async updateVideo(videoId: string, video: VideoDto) {
-    const data = await this.videoRepository.findOne({ id: videoId });
-    const result = await this.videoRepository.save({ ...data, ...video });
+    const data = await this.videoRepository.findOne(
+      {
+        id: videoId,
+      },
+      { relations: ['episodes', 'episodes.qualities'] },
+    );
+    if (video.episodes) {
+      for (const episode of video.episodes) {
+        if (episode) {
+          const isEpisodeExists = data.episodes.some(
+            (el) => el.name === episode.name,
+          );
+          if (!isEpisodeExists) {
+            const episodeToAssign = await this.episodeService.createEpisode(
+              episode,
+            );
+
+            data.episodes.push(episodeToAssign);
+          }
+        }
+      }
+    }
+    if (video.tags) {
+      for (const tag of video.tags) {
+        if (tag) {
+          const isEpisodeExists = data.tags.some((el) => el.name === tag.name);
+          if (!isEpisodeExists) {
+            const tagsToAssign = await this.tagsService.assignTag(tag.name);
+
+            data.tags.push(tagsToAssign);
+          }
+        }
+      }
+    }
+    data.title = video.title;
+    data.description = video.description;
+
+    const result = await this.videoRepository.save(data);
     return result;
   }
 
@@ -129,19 +174,22 @@ export class VideoService {
       type,
       language,
       tags,
+      studios,
     },
   }: {
     scrapperData: ScrapperDto & ScrapperWithEpisodes;
   }) {
+    // const date = moment(new Date(releaseDate)).format();
     const video = await this.videoRepository.save({
       title,
       description,
       coverImageUrl,
-      releaseDate,
+      releaseDate: null,
     });
     const tagsToAssign = [];
     const episodesToAssign = [];
-    for (const tag of tags) {
+    const studiosToAssign = [];
+    for (const tag of tags || []) {
       const result = await this.tagsService.assignTag(tag, video);
       tagsToAssign.push(result);
     }
@@ -149,18 +197,21 @@ export class VideoService {
       language,
     );
     video.language = languageToAssign;
+    for (const studio of studios || []) {
+      const studioToAssign = await this.studioService.assignStudio(studio);
+      studiosToAssign.push(studioToAssign);
+    }
+
     const typeToAssign = await this.typeService.assignType(type);
     video.type = typeToAssign;
     for (const episode of episodes) {
-      const episodeToAssign = await this.episodeService.createEpisode(
-        episode,
-        video,
-      );
+      const episodeToAssign = await this.episodeService.createEpisode(episode);
       episodesToAssign.push(episodeToAssign);
     }
     video.episodes = episodesToAssign;
-    video.tags = tagsToAssign;
-    console.log(video, 'video');
+    // video.tags = tagsToAssign;
+    // video.studios = studiosToAssign;
+
     return await this.videoRepository.save(video);
   }
 

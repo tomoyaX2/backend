@@ -1,6 +1,7 @@
 import { CommentDto } from '../comments/comments.dto';
 import { EpisodeDto } from '../episode/episode.dto';
 import { LanguageDto } from '../languages/languages.dto';
+import { StudioDto } from '../studio/studio.dto';
 import { TagsDto } from '../tags/tags.dto';
 import { TypeDto } from '../type/type.dto';
 
@@ -23,9 +24,11 @@ export class VideoDto {
   releaseDate?: string;
   path?: string;
   type?: TypeDto;
+  description?: string;
   views?: number;
   language: LanguageDto;
   rate?: number;
+  studios: StudioDto[];
   comments?: CommentDto[];
   episodes?: EpisodeDto[];
   rates?: RateDto[];
@@ -34,9 +37,9 @@ export class VideoDto {
 }
 
 export class SearchDto {
-  page: string;
-  perPage: string;
-  title: string;
+  page: number;
+  perPage: number;
+  title?: string;
   tags?: string[];
   authors?: string[];
   series?: string[];
@@ -59,6 +62,7 @@ export class ScrapperDto {
   releaseDate: string;
   type: string;
   language: string;
+  studios: string[];
   tags: string[];
 }
 

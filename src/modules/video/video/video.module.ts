@@ -11,6 +11,7 @@ import { VideoService } from './video.service';
 import { UsersModule } from '../../users/users.module';
 import { RateModule } from '../rate/rade.module';
 import { EpisodeModule } from '../episode/episode.module';
+import { StudioModule } from '../studio/studio.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { EpisodeModule } from '../episode/episode.module';
     UsersModule,
     RateModule,
     EpisodeModule,
+    StudioModule,
   ],
   controllers: [VideoController],
   providers: [VideoService],

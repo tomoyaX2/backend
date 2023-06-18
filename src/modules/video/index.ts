@@ -10,6 +10,8 @@ import { Quality } from './quality/quality.entity';
 import { QualityModule } from './quality/quality.module';
 import { RateModule } from './rate/rade.module';
 import { Rate } from './rate/rate.entity';
+import { Studio } from './studio/studio.entity';
+import { StudioModule } from './studio/studio.module';
 import { Tag } from './tags/tags.entity';
 import { TagsModule } from './tags/tags.module';
 import { Type } from './type/type.entity';
@@ -27,6 +29,7 @@ export const VideoEntities = [
   BlockedVideo,
   Rate,
   Quality,
+  Studio,
 ];
 
 export const VideoModules = [
@@ -39,4 +42,5 @@ export const VideoModules = [
   RateModule,
   EpisodeModule,
   QualityModule,
+  StudioModule,
 ];

@@ -6,6 +6,7 @@ export class EpisodeDto {
   url: string;
   name?: string;
   qualities?: QualityDto[];
+  coverUrl?: string;
   availableQuality?: string[];
   video?: VideoDto;
 }
