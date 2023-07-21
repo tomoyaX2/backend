@@ -94,14 +94,22 @@ export class VideoService {
     } as any;
   }
 
+  getVideoByTitle = async (title: string) => {
+    const video = await this.videoRepository.findOne({
+      where: { title },
+      relations: ['episodes'],
+    });
+    return video;
+  };
+
   async getPlainVideoById(id: string): Promise<VideoDto> {
-    const album = await this.videoRepository.findOne({
+    const video = await this.videoRepository.findOne({
       where: { id },
     });
-    if (!album) {
-      throw new NotFoundException({ message: 'Album not found' });
+    if (!video) {
+      throw new NotFoundException({ message: 'Video not found' });
     }
-    return album;
+    return video;
   }
 
   async getVideoForScrapperFilter(

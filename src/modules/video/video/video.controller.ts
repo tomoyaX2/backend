@@ -74,6 +74,11 @@ export class VideoController {
     return this.videosService.getVideoForScrapperFilter(data);
   }
 
+  @Get('search-title/:title')
+  findByTitle(@Param('title') title: string) {
+    return this.videosService.getVideoByTitle(title);
+  }
+
   @Post('scrapper-video')
   saveScrapperData(@Body() scrapperData: ScrapperDto) {
     return this.videosService.generateVideo({ scrapperData });

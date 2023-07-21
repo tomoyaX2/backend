@@ -5,7 +5,6 @@ import { SearchDto, VideoDto } from './video.dto';
 import { NonUnifiedVideo } from './types';
 
 const normalizeVideo = (item: NonUnifiedVideo): VideoDto => {
-  console.log(item, 'itrem');
   return {
     id: item.Video_id,
     title: item.Video_title,
@@ -22,20 +21,20 @@ const normalizeVideo = (item: NonUnifiedVideo): VideoDto => {
     ],
     views: item.Video_views,
     rate: item.Video_rate,
-    episodes: [
-      {
-        id: item.Video__episodes_id,
-        name: item.Video__episodes_name,
-        url: item.Video__episodes_url,
-      },
-    ],
-    tags: [
-      {
-        id: item.Video__tags_id,
-        name: item.Video__tags_name,
-        videosCount: item.Video__tags_VideosCount,
-      },
-    ],
+    // episodes: [
+    //   {
+    //     id: item.Video__episodes_id,
+    //     name: item.Video__episodes_name,
+    //     url: item.Video__episodes_url,
+    //   },
+    // ],
+    // tags: [
+    //   {
+    //     id: item.Video__tags_id,
+    //     name: item.Video__tags_name,
+    //     videosCount: item.Video__tags_VideosCount,
+    //   },
+    // ],
     rates: !item.Video__rates_id
       ? []
       : [
@@ -57,9 +56,9 @@ const unifySearchData = (searchData: NonUnifiedVideo[]): VideoDto[] => {
       result.set(item.Video_id, normalizeVideo(item));
     } else {
       const target = result.get(item.Video_id);
-      const hasCurrentTag = target.tags.some(
-        (el) => el.id === item.Video__tags_id,
-      );
+      // const hasCurrentTag = target.tags.some(
+      //   (el) => el.id === item.Video__tags_id,
+      // );
       const hasCurrentRate = target.rates.some(
         (el) => el.id === item.Video__rates_id,
       );
@@ -77,17 +76,17 @@ const unifySearchData = (searchData: NonUnifiedVideo[]): VideoDto[] => {
       //     episodes: [...target.episodes, newEpisode],
       //   });
       // }
-      if (!hasCurrentTag) {
-        const newTag = {
-          id: item.Video__tags_id,
-          name: item.Video__tags_name,
-          VideosCount: item.Video__tags_VideosCount,
-        };
-        result.set(item.Video_id, {
-          ...target,
-          tags: [...target.tags, newTag],
-        });
-      }
+      // if (!hasCurrentTag) {
+      //   const newTag = {
+      //     id: item.Video__tags_id,
+      //     name: item.Video__tags_name,
+      //     VideosCount: item.Video__tags_VideosCount,
+      //   };
+      //   result.set(item.Video_id, {
+      //     ...target,
+      //     tags: [...target.tags, newTag],
+      //   });
+      // }
       if (!hasCurrentRate) {
         const newRate = {
           id: item.Video__rates_id,
