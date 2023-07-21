@@ -41,7 +41,6 @@ export class SearchDto {
   perPage: number;
   title?: string;
   tags?: string[];
-  authors?: string[];
   series?: string[];
   languages?: string[];
   groups?: string[];

@@ -23,6 +23,7 @@ import { EpisodeService } from '../episode/episodes.service';
 import { appendRate } from 'src/modules/manga/album/utils/appendRate';
 import { StudioService } from '../studio/studio.service';
 import * as moment from 'moment';
+import { buildStrictPagination } from './search';
 
 @Injectable()
 export class VideoService {
@@ -75,21 +76,17 @@ export class VideoService {
     };
   }
 
-  async search(
-    body: SearchDto,
-    relations: string[] = videoRelations,
-  ): Promise<PaginatedVideoDto> {
-    const searchObject = {
-      relations,
-      take: body.perPage,
-      skip: (body.page - 1) * body.perPage,
-      order: { created_date: 'DESC' },
-    } as any;
-    if (body.title) {
-      searchObject.where = { title: body.title };
-    }
-    const [data, total] = await this.videoRepository.findAndCount(searchObject);
-
+  async search(body: SearchDto): Promise<PaginatedVideoDto> {
+    const [data, total] = await buildStrictPagination(
+      body,
+      this.videoRepository,
+      // this.tagsService,
+      // this.authorsService,
+      // this.seriesService,
+      // this.languageService,
+      // this.groupService,
+    );
+    //TODO: make with sql query
     return {
       data: appendRate(data as VideoDto[]) ?? [],
       total,
