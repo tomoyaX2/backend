@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Like, Repository } from 'typeorm';
 import { LanguagesService } from '../languages/languages.service';
 import { TagsService } from '../tags/tags.service';
 import { TypeService } from '../type/type.service';
@@ -22,7 +22,6 @@ import { BlockedVideoService } from '../blocked/blocked.service';
 import { EpisodeService } from '../episode/episodes.service';
 import { appendRate } from 'src/modules/manga/album/utils/appendRate';
 import { StudioService } from '../studio/studio.service';
-import * as moment from 'moment';
 import { buildStrictPagination } from './search';
 
 @Injectable()
@@ -95,10 +94,29 @@ export class VideoService {
   }
 
   getVideoByTitle = async (title: string) => {
-    const video = await this.videoRepository.findOne({
+    let video = null;
+    video = await this.videoRepository.findOne({
       where: { title },
       relations: ['episodes'],
     });
+    if (!video) {
+      video = await this.videoRepository.findOne({
+        where: { title: `${title}!` },
+        relations: ['episodes'],
+      });
+    }
+    if (!video) {
+      video = await this.videoRepository.findOne({
+        where: { title: ILike(`%${title}%`) },
+        relations: ['episodes'],
+      });
+    }
+    if (!video) {
+      video = await this.videoRepository.findOne({
+        where: { title: ILike(`%${title.substring(0, title.length / 2)}%`) },
+        relations: ['episodes'],
+      });
+    }
     return video;
   };
 
@@ -153,8 +171,8 @@ export class VideoService {
     if (video.tags) {
       for (const tag of video.tags) {
         if (tag) {
-          const isEpisodeExists = data.tags.some((el) => el.name === tag.name);
-          if (!isEpisodeExists) {
+          const isTagExists = data.tags.some((el) => el.name === tag.name);
+          if (!isTagExists) {
             const tagsToAssign = await this.tagsService.assignTag(tag.name);
 
             data.tags.push(tagsToAssign);
@@ -162,9 +180,29 @@ export class VideoService {
         }
       }
     }
+
+    if (video.studios) {
+      for (const studio of video.studios) {
+        if (studio) {
+          const isStudioExists = data.studios.some(
+            (el) => el.name === studio.name,
+          );
+          if (!isStudioExists) {
+            const studioToAssign = await this.studioService.assignStudio(
+              studio.name,
+            );
+            data.studios.filter((el) => !!el.id);
+            data.studios.push(studioToAssign);
+          }
+        }
+      }
+    }
     data.title = video.title;
-    data.description = video?.description;
-    data.studios = video.studios;
+    // data.description = video?.description;
+    if (video.coverImageUrl) {
+      data.coverImageUrl = video.coverImageUrl;
+    }
+    data.releaseDate = video.releaseDate;
     const result = await this.videoRepository.save(data);
     return result;
   }
@@ -175,7 +213,6 @@ export class VideoService {
       episodes,
       coverImageUrl,
       description,
-      releaseDate,
       type,
       language,
       tags,
@@ -249,5 +286,23 @@ export class VideoService {
     );
     const user = await this.usersService.getUserById(userId, ['rates']);
     await this.rateService.saveRate({ video, user, rate });
+  };
+
+  updateVideoTags = async ({
+    tags,
+    videoId,
+  }: {
+    tags: string[];
+    videoId: string;
+  }) => {
+    const video = await this.getVideoById(videoId);
+    for (const tag of tags) {
+      const isTagPresentAlready = video.tags.some((el) => el.name === tag);
+      if (!isTagPresentAlready) {
+        const updatedTag = await this.tagsService.assignTag(tag, video);
+        video.tags = [...video.tags, updatedTag];
+      }
+    }
+    await this.videoRepository.save(video);
   };
 }

@@ -19,3 +19,11 @@ export const videoRelations = [
   'type',
   'episodes.qualities',
 ];
+
+export const videoWithoutTagsRelations = [
+  'language',
+  'episodes',
+  'comments',
+  'type',
+  'episodes.qualities',
+];

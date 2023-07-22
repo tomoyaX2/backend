@@ -19,6 +19,7 @@ import {
   RateDto,
   ScrapperDto,
   SearchDto,
+  UpdateVideoTagsDto,
 } from './video.dto';
 import { VideoService } from './video.service';
 
@@ -117,5 +118,13 @@ export class VideoController {
       userId: req.sub,
       rate: body.rate,
     });
+  }
+
+  @Patch(':videoId/update-tags')
+  updateVideoTags(
+    @Param('videoId') videoId: string,
+    @Body() body: UpdateVideoTagsDto,
+  ) {
+    return this.videosService.updateVideoTags({ videoId, tags: body.tags });
   }
 }

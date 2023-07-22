@@ -5,6 +5,7 @@ export interface NonUnifiedVideo {
   Video_rate: number;
   Video_created_date: string;
   Video_updated_date: string;
+  Video_coverImageUrl: string;
 
   Video_type_id: string;
   Video__episodes_id: string;

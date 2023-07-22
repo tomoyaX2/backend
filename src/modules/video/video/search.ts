@@ -21,6 +21,7 @@ const normalizeVideo = (item: NonUnifiedVideo): VideoDto => {
     ],
     views: item.Video_views,
     rate: item.Video_rate,
+    coverImageUrl: item.Video_coverImageUrl,
     // episodes: [
     //   {
     //     id: item.Video__episodes_id,

@@ -73,3 +73,7 @@ export class ScrapperWithEpisodes {
     availableQuality: string[];
   }[];
 }
+
+export class UpdateVideoTagsDto {
+  tags: string[];
+}
