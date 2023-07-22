@@ -10,16 +10,16 @@ import { VideoDto } from '../video/video.dto';
 export class EpisodeService {
   constructor(
     @InjectRepository(Episode)
-    private episodeService: Repository<EpisodeDto>,
+    private episodeRepository: Repository<EpisodeDto>,
     private qualityService: QualityService,
   ) {}
 
   getAllEpisodes = async () => {
-    return this.episodeService.find();
+    return this.episodeRepository.find();
   };
 
   getEpisodesByVideoId = async ({ videoId }: { videoId: string }) => {
-    return this.episodeService.find({
+    return this.episodeRepository.find({
       where: { video: { id: videoId } },
       relations: ['video'],
     });
@@ -27,7 +27,7 @@ export class EpisodeService {
 
   async createEpisode(episode: EpisodeDto): Promise<EpisodeDto> {
     try {
-      const item = await this.episodeService.save({
+      const item = await this.episodeRepository.save({
         url: episode.url,
         name: episode.name,
       });
@@ -42,17 +42,23 @@ export class EpisodeService {
         }
       }
       if (qualitiesToAssign.length) episode.qualities = qualitiesToAssign;
-      await this.episodeService.save(episode);
-      const result = await this.episodeService.findOne({ id: episode.id });
+      await this.episodeRepository.save(episode);
+      const result = await this.episodeRepository.findOne({ id: episode.id });
       return result;
     } catch (e) {
       console.log('create episode failed', e);
     }
   }
 
+  async updateEpisodeCover({ coverUrl, id }: { coverUrl: string; id: string }) {
+    const episode = await this.episodeRepository.findOne(id);
+    episode.coverUrl = coverUrl;
+    await this.episodeRepository.save(episode);
+  }
+
   deleteEpisode = async ({ episodeIds }: { episodeIds: string[] }) => {
     try {
-      await this.episodeService.delete(episodeIds);
+      await this.episodeRepository.delete(episodeIds);
     } catch (e) {
       console.error(e);
     }

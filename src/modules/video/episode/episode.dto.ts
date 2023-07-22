@@ -10,3 +10,7 @@ export class EpisodeDto {
   availableQuality?: string[];
   video?: VideoDto;
 }
+
+export class UpdateEpisodeCoverDto {
+  coverUrl: string;
+}

@@ -163,8 +163,8 @@ export class VideoService {
       }
     }
     data.title = video.title;
-    data.description = video.description;
-
+    data.description = video?.description;
+    data.studios = video.studios;
     const result = await this.videoRepository.save(data);
     return result;
   }

@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AccessTokenGuard } from '../../auth/auth.guard';
-import { EpisodeDto } from './episode.dto';
+import { EpisodeDto, UpdateEpisodeCoverDto } from './episode.dto';
 import { EpisodeService } from './episodes.service';
 
 @Controller('episodes')
@@ -33,6 +33,17 @@ export class EpisodesController {
   @Post()
   createEpisode(@Body() episode: EpisodeDto): Promise<EpisodeDto> {
     return this.episodeService.createEpisode(episode);
+  }
+
+  @Post(':episodeId/update-cover')
+  updateEpisodeCover(
+    @Param('episodeId') episodeId: string,
+    @Body() body: UpdateEpisodeCoverDto,
+  ) {
+    return this.episodeService.updateEpisodeCover({
+      coverUrl: body.coverUrl,
+      id: episodeId,
+    });
   }
 
   @Delete()
