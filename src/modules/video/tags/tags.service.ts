@@ -138,4 +138,9 @@ export class TagsService {
     tag.videosCount = tag.videosCount === 0 ? 0 : tag.videosCount - 1;
     await this.tagsRepository.save(tag);
   };
+
+  getTagsByIds = async (ids: string[]) => {
+    const result = await this.tagsRepository.findByIds(ids);
+    return result;
+  };
 }

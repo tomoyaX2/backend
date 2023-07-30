@@ -98,6 +98,7 @@ export class VideoService {
 
   getVideoByTitle = async (title: string) => {
     let video = null;
+    console.log(title, 'title');
     video = await this.videoRepository.findOne({
       where: { title },
       relations: ['episodes'],
@@ -298,14 +299,13 @@ export class VideoService {
     tags: string[];
     videoId: string;
   }) => {
-    const video = await this.getVideoById(videoId);
-    for (const tag of tags) {
-      const isTagPresentAlready = video.tags.some((el) => el.name === tag);
-      if (!isTagPresentAlready) {
-        const updatedTag = await this.tagsService.assignTag(tag, video);
-        video.tags = [...video.tags, updatedTag];
-      }
-    }
-    await this.videoRepository.save(video);
+    const video = await this.videoRepository.findOne(
+      { id: videoId },
+      { relations: ['tags'] },
+    );
+    const tagResults = await this.tagsService.getTagsByIds(tags);
+    video.tags = tagResults;
+    await this.tagsService.assignVideoToTag(video);
+    return await this.videoRepository.save(video);
   };
 }
