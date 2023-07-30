@@ -85,6 +85,9 @@ export class VideoService {
       // this.languageService,
       // this.groupService,
     );
+    // for (const item of data as any) {
+    //   await this.videoRepository.remove(item);
+    // }
     //TODO: make with sql query
     return {
       data: appendRate(data as VideoDto[]) ?? [],

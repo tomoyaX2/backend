@@ -66,3 +66,7 @@ export class RecommendationsDto {
   sameSeries?: AlbumDto[];
   sameGroups?: AlbumDto[];
 }
+
+export class PatchTagsDto {
+  tagIds: string[];
+}

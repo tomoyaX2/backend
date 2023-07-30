@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Query,
+  Patch,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import { AccessTokenGuard } from '../../auth/auth.guard';
 import {
   AlbumDto,
   PaginatedAlbumDto,
+  PatchTagsDto,
   RateDto,
   RecommendationsDto,
   SearchDto,
@@ -146,5 +148,13 @@ export class AlbumController {
     return this.albumService.getAlbumRecomendations({
       albumId,
     });
+  }
+
+  @Patch(':albumId/tags')
+  pathTags(
+    @Param('albumId') albumId: string,
+    @Body() data: PatchTagsDto,
+  ): Promise<AlbumDto> {
+    return this.albumService.patchTags(data.tagIds, albumId);
   }
 }

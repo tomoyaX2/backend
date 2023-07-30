@@ -327,4 +327,15 @@ export class AlbumService {
       sameGroups: appendRate(sameGroups),
     };
   };
+
+  patchTags = async (tagIds: string[], albumId: string) => {
+    const album = await this.albumRepository.findOne(
+      { id: albumId },
+      { relations: ['tags'] },
+    );
+    const tags = await this.tagsService.getTagsByIds(tagIds);
+    album.tags = tags;
+    await this.tagsService.assignAlbumToTag(album);
+    return await this.albumRepository.save(album);
+  };
 }

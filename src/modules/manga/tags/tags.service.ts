@@ -124,4 +124,9 @@ export class TagsService {
     tag.albumsCount -= 1;
     await this.tagsRepository.save(tag);
   };
+
+  getTagsByIds = async (ids: string[]) => {
+    const result = await this.tagsRepository.findByIds(ids);
+    return result;
+  };
 }
