@@ -143,4 +143,19 @@ export class TagsService {
     const result = await this.tagsRepository.findByIds(ids);
     return result;
   };
+
+  getTagsByNames = async (names: string[]) => {
+    const result = [];
+    for (const name of names) {
+      const item = await this.tagsRepository.findOne({
+        where: { name },
+      });
+      if (item) result.push(item);
+      if (!item) {
+        const newTag = await this.tagsRepository.save({ name });
+        result.push(newTag);
+      }
+    }
+    return result;
+  };
 }

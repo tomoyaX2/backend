@@ -303,7 +303,7 @@ export class VideoService {
       { id: videoId },
       { relations: ['tags'] },
     );
-    const tagResults = await this.tagsService.getTagsByIds(tags);
+    const tagResults = await this.tagsService.getTagsByNames(tags);
     video.tags = tagResults;
     await this.tagsService.assignVideoToTag(video);
     return await this.videoRepository.save(video);
