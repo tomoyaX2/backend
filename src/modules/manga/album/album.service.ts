@@ -103,6 +103,15 @@ export class AlbumService {
       this.languageService,
       this.groupService,
     );
+
+    for (const item of data as AlbumDto[]) {
+      const images = await this.imageService.getImages({
+        page: 1,
+        perPage: 30,
+        albumId: item.id,
+      });
+      item.images = images.data;
+    }
     //TODO: make with sql query
     return {
       data: appendRate(data as AlbumDto[]) ?? [],
