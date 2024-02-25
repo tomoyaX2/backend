@@ -24,6 +24,9 @@ export class User {
     @Column({ length: 255 })
     name: string
 
+    @Column({ length: 255, nullable: true })
+    last_visit?: string
+
     @Column({ length: 255 })
     @Exclude()
     password: string
