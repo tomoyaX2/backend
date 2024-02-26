@@ -56,6 +56,7 @@ export class AuthService {
         const accessToken = jwt.sign({ sub: user.id }, process.env.JWT_SECRET, {
             expiresIn: '1314000s',
         })
+        console.log('test')
         user.access_token = accessToken
         user.last_visit = new Date().toISOString()
         await this.usersService.saveUser(user)
