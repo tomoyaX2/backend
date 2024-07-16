@@ -9,7 +9,6 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  Timestamp,
 } from 'typeorm';
 import { Comment } from '../comments/comments.entity';
 import { Language } from '../languages/languages.entity';

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Like, Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { LanguagesService } from '../languages/languages.service';
 import { TagsService } from '../tags/tags.service';
 import { TypeService } from '../type/type.service';
@@ -22,6 +22,7 @@ import { BlockedVideoService } from '../blocked/blocked.service';
 import { EpisodeService } from '../episode/episodes.service';
 import { appendRate } from 'src/modules/manga/album/utils/appendRate';
 import { StudioService } from '../studio/studio.service';
+import * as moment from 'moment';
 import { buildStrictPagination } from './search';
 
 @Injectable()
@@ -125,13 +126,13 @@ export class VideoService {
   };
 
   async getPlainVideoById(id: string): Promise<VideoDto> {
-    const video = await this.videoRepository.findOne({
+    const album = await this.videoRepository.findOne({
       where: { id },
     });
-    if (!video) {
-      throw new NotFoundException({ message: 'Video not found' });
+    if (!album) {
+      throw new NotFoundException({ message: 'Album not found' });
     }
-    return video;
+    return album;
   }
 
   async getVideoForScrapperFilter(
@@ -150,64 +151,8 @@ export class VideoService {
   }
 
   async updateVideo(videoId: string, video: VideoDto) {
-    const data = await this.videoRepository.findOne(
-      {
-        id: videoId,
-      },
-      { relations: ['episodes', 'episodes.qualities'] },
-    );
-    if (video.episodes) {
-      for (const episode of video.episodes) {
-        if (episode) {
-          const isEpisodeExists = data.episodes.some(
-            (el) => el.name === episode.name,
-          );
-          if (!isEpisodeExists) {
-            const episodeToAssign = await this.episodeService.createEpisode(
-              episode,
-            );
-
-            data.episodes.push(episodeToAssign);
-          }
-        }
-      }
-    }
-    if (video.tags) {
-      for (const tag of video.tags) {
-        if (tag) {
-          const isTagExists = data.tags.some((el) => el.name === tag.name);
-          if (!isTagExists) {
-            const tagsToAssign = await this.tagsService.assignTag(tag.name);
-
-            data.tags.push(tagsToAssign);
-          }
-        }
-      }
-    }
-
-    if (video.studios) {
-      for (const studio of video.studios) {
-        if (studio) {
-          const isStudioExists = data.studios.some(
-            (el) => el.name === studio.name,
-          );
-          if (!isStudioExists) {
-            const studioToAssign = await this.studioService.assignStudio(
-              studio.name,
-            );
-            data.studios.filter((el) => !!el.id);
-            data.studios.push(studioToAssign);
-          }
-        }
-      }
-    }
-    data.title = video.title;
-    // data.description = video?.description;
-    if (video.coverImageUrl) {
-      data.coverImageUrl = video.coverImageUrl;
-    }
-    data.releaseDate = video.releaseDate;
-    const result = await this.videoRepository.save(data);
+    const data = await this.videoRepository.findOne({ id: videoId });
+    const result = await this.videoRepository.save({ ...data, ...video });
     return result;
   }
 
@@ -217,6 +162,7 @@ export class VideoService {
       episodes,
       coverImageUrl,
       description,
+      releaseDate,
       type,
       language,
       tags,
@@ -225,17 +171,17 @@ export class VideoService {
   }: {
     scrapperData: ScrapperDto & ScrapperWithEpisodes;
   }) {
-    // const date = moment(new Date(releaseDate)).format();
+    const date = moment(new Date(releaseDate)).format();
     const video = await this.videoRepository.save({
       title,
       description,
       coverImageUrl,
-      releaseDate: null,
+      releaseDate: date,
     });
     const tagsToAssign = [];
     const episodesToAssign = [];
     const studiosToAssign = [];
-    for (const tag of tags || []) {
+    for (const tag of tags) {
       const result = await this.tagsService.assignTag(tag, video);
       tagsToAssign.push(result);
     }
@@ -243,7 +189,7 @@ export class VideoService {
       language,
     );
     video.language = languageToAssign;
-    for (const studio of studios || []) {
+    for (const studio of studios) {
       const studioToAssign = await this.studioService.assignStudio(studio);
       studiosToAssign.push(studioToAssign);
     }
@@ -255,8 +201,8 @@ export class VideoService {
       episodesToAssign.push(episodeToAssign);
     }
     video.episodes = episodesToAssign;
-    // video.tags = tagsToAssign;
-    // video.studios = studiosToAssign;
+    video.tags = tagsToAssign;
+    video.studios = studiosToAssign;
 
     return await this.videoRepository.save(video);
   }
