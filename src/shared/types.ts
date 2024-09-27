@@ -19,6 +19,7 @@ export interface DefaultPaginationQuery {
   withAlbums?: boolean;
   withVideos?: boolean;
   [AlbumFilters.Name]?: string;
+  title?: string;
 }
 
 export interface CommentsPaginationQuery extends DefaultPaginationQuery {

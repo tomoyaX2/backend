@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HitomiFields } from 'src/shared/enums/HitomiFields';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { AuthorService } from '../authors/authors.service';
 import { GroupService } from '../group/group.service';
 import { ImageService } from '../image/image.service';
@@ -42,10 +42,12 @@ export class AlbumService {
   async getAlbums({
     page,
     perPage,
+    title,
   }: DefaultPaginationQuery): Promise<PaginatedAlbumDto> {
     const [data, total] = await this.albumRepository.findAndCount({
       take: perPage,
       skip: (page - 1) * perPage,
+      where: title ? { title: ILike(`%${title}%`) } : undefined,
     });
     return { data, total, currentPage: page };
   }

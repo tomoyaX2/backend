@@ -38,14 +38,21 @@ export class AlbumController {
     type: Number,
     required: false,
   })
+  @ApiQuery({
+    name: 'title',
+    type: String,
+    required: false,
+  })
   @Get()
   getAlbums(
     @Query('page') page: string,
     @Query('perPage') perPage: string,
+    @Query('title') title: string,
   ): Promise<PaginatedAlbumDto> {
     return this.albumService.getAlbums({
       page: parseInt(page),
       perPage: parseInt(perPage),
+      title,
     });
   }
 
