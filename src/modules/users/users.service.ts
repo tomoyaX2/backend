@@ -27,7 +27,7 @@ export class UsersService {
       where,
       take: perPage,
       skip: page * perPage,
-      order: { last_visit: 'DESC' },
+      order: { created_date: 'DESC' },
     });
     return { data, total, currentPage: page };
   }
