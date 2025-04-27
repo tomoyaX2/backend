@@ -97,6 +97,7 @@ export class AlbumService {
   }
 
   async searchAlbums(albumParams: AlbumPaginationQuery): Promise<any> {
+    console.time('pagination');
     const [data, total] = await buildStrictPagination(
       albumParams,
       this.albumRepository,
@@ -106,9 +107,12 @@ export class AlbumService {
       this.languageService,
       this.groupService,
     );
+    console.timeEnd('pagination');
 
+    console.time('images');
     const modifiedData = await Promise.allSettled(
       (data as AlbumDto[]).map(async (item) => {
+        console.time(item.id);
         const images = await this.imageService.getImages({
           page: 1,
           perPage: 1,
@@ -116,10 +120,12 @@ export class AlbumService {
         });
 
         item.images = images.data;
+        console.timeEnd(item.id);
 
         return item;
       }),
     );
+    console.timeEnd('images');
 
     return {
       data: appendRate(modifiedData.map((el: any) => el.value)) ?? [],
