@@ -49,6 +49,7 @@ export class AlbumService {
       skip: (page - 1) * perPage,
       where: title ? { title: ILike(`%${title}%`) } : undefined,
     });
+
     return { data, total, currentPage: page };
   }
 
@@ -106,17 +107,22 @@ export class AlbumService {
       this.groupService,
     );
 
-    for (const item of data as AlbumDto[]) {
-      const images = await this.imageService.getImages({
-        page: 1,
-        perPage: 30,
-        albumId: item.id,
-      });
-      item.images = images.data;
-    }
-    //TODO: make with sql query
+    const modifiedData = await Promise.allSettled(
+      (data as AlbumDto[]).map(async (item) => {
+        const images = await this.imageService.getImages({
+          page: 1,
+          perPage: 1,
+          albumId: item.id,
+        });
+
+        item.images = images.data;
+
+        return item;
+      }),
+    );
+
     return {
-      data: appendRate(data as AlbumDto[]) ?? [],
+      data: appendRate(modifiedData.map((el: any) => el.value)) ?? [],
       total,
       currentPage: albumParams.page,
     } as any;

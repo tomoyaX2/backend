@@ -57,7 +57,7 @@ export class GroupService {
       );
       await this.groupRepository.save({
         ...targetGroup,
-        albums: [...(targetGroup?.albums || []), album],
+        albums: [...(targetGroup?.albums || []), album] as any,
       });
     } catch (e) {
       this.logService.saveLog(

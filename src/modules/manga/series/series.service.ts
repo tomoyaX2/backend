@@ -57,7 +57,7 @@ export class SeriesService {
       );
       return await this.seriesRepository.save({
         ...targetSeries,
-        albums: [...(targetSeries?.albums || []), album],
+        albums: [...(targetSeries?.albums || []), album] as any,
       });
     } catch (e) {
       this.logService.saveLog(
