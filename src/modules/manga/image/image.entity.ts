@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  Index,
 } from 'typeorm';
 import { Album } from '../album/album.entity';
 
@@ -23,6 +24,7 @@ export class Image {
   @Column({ nullable: true })
   height?: number;
 
+  @Index()
   @ManyToOne(() => Album, (album) => album.images, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
