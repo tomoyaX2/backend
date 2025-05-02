@@ -10,6 +10,7 @@ import { ChangeUserDataDto, PaginatedUsersDto, UserDto } from './users.dto';
 import { User } from './users.entity';
 import { FileService } from '../file/file.service';
 import { RateDto } from '../manga/rate/rate.dto';
+import _ from 'lodash';
 
 @Injectable()
 export class UsersService {
@@ -29,7 +30,9 @@ export class UsersService {
       skip: page * perPage,
       order: { created_date: 'DESC' },
     });
-    return { data, total, currentPage: page };
+
+    const omitedData = data.map((el) => _.omit(el, 'password'));
+    return { data: omitedData, total, currentPage: page };
   }
 
   async getUserById(id: string, relations?: string[]): Promise<UserDto> {
@@ -124,7 +127,9 @@ export class UsersService {
     for (const userFieldToUpdate of keys(userData)) {
       user[userFieldToUpdate] = userData[userFieldToUpdate];
     }
-    await this.usersRepository.save(user);
+
+    const omittedUser = _.omit(user, 'isAdmin');
+    await this.usersRepository.save(omittedUser);
     return '';
   };
 
