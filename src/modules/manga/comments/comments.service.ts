@@ -12,6 +12,7 @@ import { Comment } from './comments.entity';
 import { UsersService } from '../../users/users.service';
 import { AlbumService } from '../album/album.service';
 import { Errors } from 'src/errors/auth';
+import { omit } from 'src/shared/utils';
 
 @Injectable()
 export class CommentsService {
@@ -36,7 +37,12 @@ export class CommentsService {
       relations: ['author'],
       where: { album: { id: albumId } },
     });
-    return { data, total, currentPage: page };
+
+    const mappedData = data.map((el) => ({
+      ...el,
+      author: omit(el.author, ['password']),
+    }));
+    return { data: mappedData, total, currentPage: page };
   }
 
   async saveComment(
